@@ -459,7 +459,8 @@
 
     function montarLancamento(item, index) {
       return {
-        id: item.id || item.ID || item.linha || item.Linha || index + 2,
+        id: item.rowIndex || item.id || item.ID || item.linha || item.Linha || index + 2,
+        rowIndex: item.rowIndex || index + 2,
         periodo: pegarCampo(item, ["Período", "Periodo"]),
         cartaoFinal: pegarCampo(item, ["Cartão Final", "Cartao Final"]),
         proprietario: pegarCampo(item, ["Proprietário", "Proprietario"]),
@@ -712,26 +713,31 @@ lancamentos = (dados.data || []).map(montarLancamento);
       atualizarAP(event.target.dataset.id, event.target.dataset.campo, event.target.value);
     });
 
-    el.tabela.addEventListener("click", event => {
-    el.tabela.addEventListener("click", event => {
+     el.tabela.addEventListener("click", event => {
   const botaoCopiar = event.target.closest(".copy-btn");
+
   if (botaoCopiar) {
     const texto = decodeURIComponent(botaoCopiar.dataset.copy || "");
     navigator.clipboard.writeText(texto);
     mostrarStatus("Texto copiado.", "ok");
     return;
   }
-        const botaoPdf = event.target.closest("button[data-pdf]");
-      if (botaoPdf) {
-        selecionarLancamento(botaoPdf.dataset.pdf);
-        return;
-      }
 
-      if (event.target.classList.contains("input-ap")) return;
-      const linha = event.target.closest("tr[data-id]");
-      if (linha) selecionarLancamento(linha.dataset.id);
-    });
+  const botaoPdf = event.target.closest("button[data-pdf]");
 
+  if (botaoPdf) {
+    selecionarLancamento(botaoPdf.dataset.pdf);
+    return;
+  }
+
+  if (event.target.classList.contains("input-ap")) return;
+
+  const linha = event.target.closest("tr[data-id]");
+
+  if (linha) {
+    selecionarLancamento(linha.dataset.id);
+  }
+});
     carregarLancamentos();
   </script>
 </body>
