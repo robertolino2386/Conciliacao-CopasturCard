@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conciliação Extrato CopasturCard</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <style>
+    :root {
+      --azul-escuro: #00285C;
+      --azul-claro: #00AEEF;
+      --azul-suave: #EAF7FF;
+      --cinza-fundo: #F6F8FB;
+      --cinza-borda: #D8E1EC;
+      --texto: #1E2A36;
+      --branco: #FFFFFF;
+      --verde: #14A44D;
+      --vermelho: #DC3545;
+      --sombra: 0 10px 30px rgba(0, 40, 92, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cinza-fundo);
+      color: var(--texto);
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--azul-escuro), #064A9B);
+      color: var(--branco);
+      padding: 26px 22px;
+      box-shadow: var(--sombra);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 34px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      opacity: 0.9;
+      font-size: 15px;
+    }
+
+    main {
+      width: min(1500px, calc(100% - 28px));
+      margin: 24px auto 50px;
+    }
+
+    .card {
+      background: var(--branco);
+      border: 1px solid var(--cinza-borda);
+      border-radius: 18px;
+      box-shadow: var(--sombra);
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+      padding: 18px;
+      border-bottom: 1px solid var(--cinza-borda);
+      background: var(--branco);
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--cinza-fundo);
+      border: 1px solid var(--cinza-borda);
+      border-radius: 14px;
+      padding: 0 14px;
+      min-height: 46px;
+    }
+
+    .search-box span { color: var(--azul-escuro); font-weight: 700; }
+
+    input, button {
+      font-family: inherit;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      font-size: 15px;
+      color: var(--texto);
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--azul-escuro);
+      color: var(--branco);
+    }
+
+    .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+    .btn-light {
+      background: var(--azul-suave);
+      color: var(--azul-escuro);
+      border: 1px solid #BDEAFF;
+    }
+
+    .btn-light:hover { background: #DDF4FF; }
+
+    .btn-success {
+      background: var(--verde);
+      color: var(--branco);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status {
+      padding: 12px 18px;
+      font-size: 14px;
+      display: none;
+      border-bottom: 1px solid var(--cinza-borda);
+    }
+
+    .status.show { display: block; }
+    .status.ok { color: var(--verde); background: #EFFFF5; }
+    .status.erro { color: var(--vermelho); background: #FFF0F1; }
+    .status.info { color: var(--azul-escuro); background: var(--azul-suave); }
+
+    .table-wrap {
+      width: 100%;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1180px;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: var(--azul-escuro);
+      color: var(--branco);
+      text-align: left;
+      font-size: 13px;
+      padding: 13px 12px;
+      border-right: 1px solid rgba(255,255,255,0.16);
+    }
+
+    tbody td {
+      padding: 12px;
+      border-bottom: 1px solid var(--cinza-borda);
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    tbody tr {
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    tbody tr:hover { background: var(--azul-suave); }
+    tbody tr.selecionado { background: #DDF4FF; outline: 2px solid var(--azul-claro); }
+
+    .valor {
+      font-weight: 800;
+      color: var(--azul-escuro);
+      white-space: nowrap;
+    }
+
+    .input-ap {
+      width: 120px;
+      border: 1px solid var(--cinza-borda);
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .input-ap:focus {
+      border-color: var(--azul-claro);
+      box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.14);
+    }
+
+    .pdf-area {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 18px;
+    }
+
+    .pdf-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pdf-head h2 {
+      margin: 0;
+      color: var(--azul-escuro);
+      font-size: 20px;
+    }
+
+    .resumo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      border: 1px solid var(--cinza-borda);
+      background: var(--cinza-fundo);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .metric small {
+      display: block;
+      color: #667085;
+      margin-bottom: 6px;
+    }
+
+    .metric strong {
+      color: var(--azul-escuro);
+      font-size: 18px;
+    }
+
+    .empty {
+      padding: 30px 18px;
+      text-align: center;
+      color: #667085;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: var(--azul-suave);
+      color: var(--azul-escuro);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    @media (max-width: 850px) {
+      .toolbar { grid-template-columns: 1fr; }
+      .btn { width: 100%; }
+      .resumo-grid { grid-template-columns: 1fr 1fr; }
+      main { width: calc(100% - 18px); margin-top: 14px; }
+      header { padding: 22px 16px; }
+    }
+
+    @media (max-width: 520px) {
+      .resumo-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Conciliação Extrato CopasturCard</h1>
+    <p>Controle dos lançamentos, AP CPA, AP CRE e conferência da fatura do cartão.</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="toolbar">
+        <label class="search-box" for="filtro">
+          <span>🔎</span>
+          <input id="filtro" type="text" placeholder="Pesquisar por cliente, mês, ano ou final do cartão" />
+        </label>
+        <button class="btn btn-light" id="btnAtualizar" type="button">Atualizar</button>
+        <button class="btn btn-primary" id="btnSalvar" type="button">Salvar APs</button>
+      </div>
+
+      <div id="status" class="status"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Período</th>
+              <th>Cartão Final</th>
+              <th>Proprietário</th>
+              <th>Valor</th>
+              <th>Histórico</th>
+              <th>Documento Digitado</th>
+              <th>AP CPA</th>
+              <th>AP CRE</th>
+              <th>Fatura</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaLancamentos">
+            <tr><td colspan="9" class="empty">Carregando lançamentos...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="pdf-area">
+        <div class="pdf-head">
+          <div>
+            <span class="pill">Fatura selecionada</span>
+            <h2 id="tituloFatura">Selecione um lançamento para conciliar</h2>
+          </div>
+          <button class="btn btn-primary" id="btnVerFatura" type="button" disabled>Ver Fatura</button>
+        </div>
+
+        <div class="resumo-grid">
+          <div class="metric"><small>Total da fatura selecionada</small><strong id="metricValor">R$ 0,00</strong></div>
+          <div class="metric"><small>Quantidade de datas</small><strong id="metricDatas">0</strong></div>
+          <div class="metric"><small>Soma identificada no PDF</small><strong id="metricSomaPdf">R$ 0,00</strong></div>
+          <div class="metric"><small>Diferença</small><strong id="metricDiferenca">R$ 0,00</strong></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Quantidade de lançamentos</th>
+                <th>Soma dos valores</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaResumoPdf">
+              <tr><td colspan="3" class="empty">O resumo por data aparecerá aqui após selecionar um lançamento com PDF.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const CONFIG = {
+      appsScriptUrl: "COLE_AQUI_A_URL_DO_APPS_SCRIPT",
+      nomeGuia: "Base de Cartoes"
+    };
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+    let lancamentos = [];
+    let lancamentosFiltrados = [];
+    let selecionado = null;
+
+    const el = {
+      filtro: document.getElementById("filtro"),
+      tabela: document.getElementById("tabelaLancamentos"),
+      status: document.getElementById("status"),
+      btnAtualizar: document.getElementById("btnAtualizar"),
+      btnSalvar: document.getElementById("btnSalvar"),
+      btnVerFatura: document.getElementById("btnVerFatura"),
+      tituloFatura: document.getElementById("tituloFatura"),
+      tabelaResumoPdf: document.getElementById("tabelaResumoPdf"),
+      metricValor: document.getElementById("metricValor"),
+      metricDatas: document.getElementById("metricDatas"),
+      metricSomaPdf: document.getElementById("metricSomaPdf"),
+      metricDiferenca: document.getElementById("metricDiferenca")
+    };
+
+    function mostrarStatus(texto, tipo = "info") {
+      el.status.textContent = texto;
+      el.status.className = `status show ${tipo}`;
+      window.clearTimeout(mostrarStatus.timer);
+      mostrarStatus.timer = window.setTimeout(() => {
+        el.status.className = "status";
+      }, 4500);
+    }
+
+    function normalizar(texto) {
+      return String(texto ?? "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function somenteNumeros(valor) {
+      return String(valor ?? "").replace(/\D/g, "");
+    }
+
+    function moedaParaNumero(valor) {
+      if (typeof valor === "number") return valor;
+      const limpo = String(valor ?? "")
+        .replace(/R\$/g, "")
+        .replace(/\s/g, "")
+        .replace(/\./g, "")
+        .replace(",", ".");
+      const numero = Number(limpo);
+      return Number.isFinite(numero) ? numero : 0;
+    }
+
+    function formatarMoeda(valor) {
+      return Number(valor || 0).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function pegarCampo(obj, nomes) {
+      const chaves = Object.keys(obj || {});
+      for (const nome of nomes) {
+        const achou = chaves.find(k => normalizar(k).trim() === normalizar(nome).trim());
+        if (achou) return obj[achou];
+      }
+      return "";
+    }
+
+    function montarLancamento(item, index) {
+      return {
+        id: item.id || item.ID || item.linha || item.Linha || index + 2,
+        periodo: pegarCampo(item, ["Período", "Periodo"]),
+        cartaoFinal: pegarCampo(item, ["Cartão Final", "Cartao Final"]),
+        proprietario: pegarCampo(item, ["Proprietário", "Proprietario"]),
+        valor: pegarCampo(item, ["Valor"]),
+        historico: pegarCampo(item, ["Historico", "Histórico"]),
+        documentoDigitado: pegarCampo(item, ["Documento Digitado"]),
+        apCpa: pegarCampo(item, ["AP CPA", "AP_CPA"]),
+        apCre: pegarCampo(item, ["AP CRE", "AP_CRE"]),
+        pdfUrl: pegarCampo(item, ["Link PDF", "PDF", "Fatura PDF", "URL PDF"])
+      };
+    }
+
+    async function carregarLancamentos() {
+      if (CONFIG.appsScriptUrl.includes("COLE_AQUI")) {
+        el.tabela.innerHTML = `<tr><td colspan="9" class="empty">Aguardando a URL do Apps Script para carregar os lançamentos.</td></tr>`;
+        return;
+      }
+
+      try {
+        mostrarStatus("Atualizando lançamentos...", "info");
+        const url = `${CONFIG.appsScriptUrl}?action=listar&guia=${encodeURIComponent(CONFIG.nomeGuia)}`;
+        const resposta = await fetch(url);
+        const dados = await resposta.json();
+
+        if (!dados.ok) throw new Error(dados.mensagem || "Não foi possível carregar os lançamentos.");
+
+        lancamentos = (dados.lancamentos || dados.data || []).map(montarLancamento);
+        aplicarFiltro();
+        mostrarStatus("Lançamentos atualizados com sucesso.", "ok");
+      } catch (erro) {
+        el.tabela.innerHTML = `<tr><td colspan="9" class="empty">Não foi possível carregar os lançamentos.</td></tr>`;
+        mostrarStatus(erro.message, "erro");
+      }
+    }
+
+    function aplicarFiltro() {
+      const termo = normalizar(el.filtro.value);
+      lancamentosFiltrados = lancamentos.filter(item => {
+        const base = normalizar([
+          item.periodo,
+          item.cartaoFinal,
+          item.proprietario,
+          item.valor,
+          item.historico,
+          item.documentoDigitado
+        ].join(" "));
+        return base.includes(termo);
+      });
+      renderizarTabela();
+    }
+
+    function renderizarTabela() {
+      if (!lancamentosFiltrados.length) {
+        el.tabela.innerHTML = `<tr><td colspan="9" class="empty">Nenhum lançamento encontrado.</td></tr>`;
+        return;
+      }
+
+      el.tabela.innerHTML = lancamentosFiltrados.map((item, index) => `
+        <tr data-id="${item.id}" class="${selecionado?.id == item.id ? "selecionado" : ""}">
+          <td>${item.periodo || ""}</td>
+          <td>${item.cartaoFinal || ""}</td>
+          <td>${item.proprietario || ""}</td>
+          <td class="valor">${formatarMoeda(moedaParaNumero(item.valor))}</td>
+          <td>${item.historico || ""}</td>
+          <td>${item.documentoDigitado || ""}</td>
+          <td><input class="input-ap" inputmode="numeric" data-campo="apCpa" data-id="${item.id}" value="${item.apCpa || ""}" /></td>
+          <td><input class="input-ap" inputmode="numeric" data-campo="apCre" data-id="${item.id}" value="${item.apCre || ""}" /></td>
+          <td><button class="btn btn-light" type="button" data-pdf="${item.id}">Selecionar</button></td>
+        </tr>
+      `).join("");
+    }
+
+    function atualizarAP(id, campo, valor) {
+      const item = lancamentos.find(l => String(l.id) === String(id));
+      if (item) item[campo] = somenteNumeros(valor);
+      const filtrado = lancamentosFiltrados.find(l => String(l.id) === String(id));
+      if (filtrado) filtrado[campo] = somenteNumeros(valor);
+    }
+
+    async function salvarAPs() {
+      if (CONFIG.appsScriptUrl.includes("COLE_AQUI")) {
+        mostrarStatus("A URL do Apps Script ainda precisa ser informada.", "erro");
+        return;
+      }
+
+      const alterados = lancamentos.map(item => ({
+        id: item.id,
+        apCpa: somenteNumeros(item.apCpa),
+        apCre: somenteNumeros(item.apCre)
+      }));
+
+      try {
+        el.btnSalvar.disabled = true;
+        mostrarStatus("Salvando APs...", "info");
+
+        const resposta = await fetch(CONFIG.appsScriptUrl, {
+          method: "POST",
+          body: JSON.stringify({ action: "salvarAPs", guia: CONFIG.nomeGuia, lancamentos: alterados })
+        });
+
+        const dados = await resposta.json();
+        if (!dados.ok) throw new Error(dados.mensagem || "Não foi possível salvar.");
+
+        mostrarStatus("APs salvas com sucesso.", "ok");
+      } catch (erro) {
+        mostrarStatus(erro.message, "erro");
+      } finally {
+        el.btnSalvar.disabled = false;
+      }
+    }
+
+    function selecionarLancamento(id) {
+      selecionado = lancamentos.find(l => String(l.id) === String(id));
+      renderizarTabela();
+      limparResumoPdf();
+
+      if (!selecionado) return;
+
+      el.tituloFatura.textContent = `${selecionado.periodo || ""} - ${selecionado.cartaoFinal || ""} - ${selecionado.proprietario || ""}`;
+      el.metricValor.textContent = formatarMoeda(moedaParaNumero(selecionado.valor));
+      el.btnVerFatura.disabled = !selecionado.pdfUrl;
+
+      if (selecionado.pdfUrl) {
+        analisarPdf(selecionado.pdfUrl, moedaParaNumero(selecionado.valor));
+      } else {
+        el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Este lançamento ainda não possui link de PDF vinculado.</td></tr>`;
+      }
+    }
+
+    function limparResumoPdf() {
+      el.metricDatas.textContent = "0";
+      el.metricSomaPdf.textContent = formatarMoeda(0);
+      el.metricDiferenca.textContent = formatarMoeda(0);
+      el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Analisando a fatura selecionada...</td></tr>`;
+    }
+
+    async function analisarPdf(pdfUrl, valorFatura) {
+      try {
+        mostrarStatus("Lendo fatura selecionada...", "info");
+        const texto = await extrairTextoPdf(pdfUrl);
+        const agrupado = agruparLancamentosPorData(texto);
+        renderizarResumoPdf(agrupado, valorFatura);
+        mostrarStatus("Fatura analisada com sucesso.", "ok");
+      } catch (erro) {
+        el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Não foi possível identificar os lançamentos do PDF automaticamente.</td></tr>`;
+        mostrarStatus("Não foi possível ler o PDF automaticamente. Use o botão Ver Fatura para conferir o detalhe.", "erro");
+      }
+    }
+
+    async function extrairTextoPdf(url) {
+      const pdf = await pdfjsLib.getDocument({ url }).promise;
+      let textoCompleto = "";
+
+      for (let pagina = 1; pagina <= pdf.numPages; pagina++) {
+        const page = await pdf.getPage(pagina);
+        const content = await page.getTextContent();
+        textoCompleto += "\n" + content.items.map(item => item.str).join(" ");
+      }
+
+      return textoCompleto;
+    }
+
+    function agruparLancamentosPorData(texto) {
+      const linhas = String(texto || "").split(/\n|(?=\d{2}\/\d{2}\/\d{4})|(?=\d{2}\/\d{2})/g);
+      const mapa = new Map();
+      const regexData = /\b(\d{2}\/\d{2}(?:\/\d{4})?)\b/;
+      const regexValor = /(?:R\$\s*)?(-?\d{1,3}(?:\.\d{3})*,\d{2})\b/g;
+
+      linhas.forEach(linha => {
+        const data = linha.match(regexData)?.[1];
+        if (!data) return;
+
+        const valores = [...linha.matchAll(regexValor)].map(m => moedaParaNumero(m[1])).filter(v => v !== 0);
+        if (!valores.length) return;
+
+        const valor = valores[valores.length - 1];
+        const atual = mapa.get(data) || { data, quantidade: 0, total: 0 };
+        atual.quantidade += 1;
+        atual.total += valor;
+        mapa.set(data, atual);
+      });
+
+      return [...mapa.values()].sort((a, b) => converterData(a.data) - converterData(b.data));
+    }
+
+    function converterData(data) {
+      const partes = data.split("/").map(Number);
+      const dia = partes[0];
+      const mes = partes[1];
+      const ano = partes[2] || new Date().getFullYear();
+      return new Date(ano, mes - 1, dia).getTime();
+    }
+
+    function renderizarResumoPdf(agrupado, valorFatura) {
+      if (!agrupado.length) {
+        el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Nenhum lançamento com data e valor foi identificado no PDF.</td></tr>`;
+        return;
+      }
+
+      const soma = agrupado.reduce((acc, item) => acc + item.total, 0);
+      const diferenca = valorFatura - soma;
+
+      el.metricDatas.textContent = agrupado.length;
+      el.metricSomaPdf.textContent = formatarMoeda(soma);
+      el.metricDiferenca.textContent = formatarMoeda(diferenca);
+
+      el.tabelaResumoPdf.innerHTML = agrupado.map(item => `
+        <tr>
+          <td>${item.data}</td>
+          <td>${item.quantidade}</td>
+          <td class="valor">${formatarMoeda(item.total)}</td>
+        </tr>
+      `).join("");
+    }
+
+    el.filtro.addEventListener("input", aplicarFiltro);
+    el.btnAtualizar.addEventListener("click", carregarLancamentos);
+    el.btnSalvar.addEventListener("click", salvarAPs);
+    el.btnVerFatura.addEventListener("click", () => {
+      if (selecionado?.pdfUrl) window.open(selecionado.pdfUrl, "_blank");
+    });
+
+    el.tabela.addEventListener("input", event => {
+      if (!event.target.classList.contains("input-ap")) return;
+      event.target.value = somenteNumeros(event.target.value);
+      atualizarAP(event.target.dataset.id, event.target.dataset.campo, event.target.value);
+    });
+
+    el.tabela.addEventListener("click", event => {
+      const botaoPdf = event.target.closest("button[data-pdf]");
+      if (botaoPdf) {
+        selecionarLancamento(botaoPdf.dataset.pdf);
+        return;
+      }
+
+      if (event.target.classList.contains("input-ap")) return;
+      const linha = event.target.closest("tr[data-id]");
+      if (linha) selecionarLancamento(linha.dataset.id);
+    });
+
+    carregarLancamentos();
+  </script>
+</body>
+</html>
