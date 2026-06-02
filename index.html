@@ -460,9 +460,9 @@
         const resposta = await fetch(url);
         const dados = await resposta.json();
 
-        if (!dados.ok) throw new Error(dados.mensagem || "Não foi possível carregar os lançamentos.");
+        if (!dados.success) throw new Error(dados.message || "Não foi possível carregar os lançamentos.");
 
-        lancamentos = (dados.lancamentos || dados.data || []).map(montarLancamento);
+lancamentos = (dados.data || []).map(montarLancamento);
         aplicarFiltro();
         mostrarStatus("Lançamentos atualizados com sucesso.", "ok");
       } catch (erro) {
