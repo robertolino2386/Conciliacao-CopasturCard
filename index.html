@@ -473,7 +473,39 @@
       }
       return "";
     }
+function montarUrlFatura(periodo, cartaoFinal) {
+  const codigoPeriodo = montarCodigoPeriodo(periodo);
+  const finalCartao = somenteNumeros(cartaoFinal).slice(-4);
 
+  if (!codigoPeriodo || !finalCartao) return "";
+
+  return `https://starkcard.carddashtool.com/cps/gerabill/bill_cta_${codigoPeriodo}.php?cardEnding=${finalCartao}`;
+}
+
+function montarCodigoPeriodo(periodo) {
+  const partes = String(periodo || "").split("/");
+  const mes = partes[0]?.padStart(2, "0");
+  const ano = partes[1]?.slice(-2);
+
+  const meses = {
+    "01": "jan",
+    "02": "fev",
+    "03": "mar",
+    "04": "abr",
+    "05": "mai",
+    "06": "jun",
+    "07": "jul",
+    "08": "ago",
+    "09": "set",
+    "10": "out",
+    "11": "nov",
+    "12": "dez"
+  };
+
+  if (!meses[mes] || !ano) return "";
+
+  return `${meses[mes]}${ano}`;
+}
     function montarLancamento(item, index) {
       return {
         id: item.rowIndex || item.id || item.ID || item.linha || item.Linha || index + 2,
@@ -487,7 +519,10 @@
         apCpa: pegarCampo(item, ["AP CPA", "AP_CPA"]),
         apCre: pegarCampo(item, ["AP CRE", "AP_CRE"]),
         finalizado: normalizar(pegarCampo(item, ["Finalizado"])) === "sim",
-        pdfUrl: pegarCampo(item, ["Link PDF", "PDF", "Fatura PDF", "URL PDF"])
+        pdfUrl: montarUrlFatura(
+  pegarCampo(item, ["Período", "Periodo"]),
+  pegarCampo(item, ["Cartão Final", "Cartao Final"])
+)
       };
     }
 
@@ -660,18 +695,59 @@ lancamentos = (dados.data || []).map(montarLancamento);
     }
 
     async function analisarPdf(pdfUrl, valorFatura) {
-      try {
-        mostrarStatus("Lendo fatura selecionada...", "info");
-        const texto = await extrairTextoPdf(pdfUrl);
-        const agrupado = agruparLancamentosPorData(texto);
-        renderizarResumoPdf(agrupado, valorFatura);
-        mostrarStatus("Fatura analisada com sucesso.", "ok");
-      } catch (erro) {
-        el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Não foi possível identificar os lançamentos do PDF automaticamente.</td></tr>`;
-        mostrarStatus("Não foi possível ler o PDF automaticamente. Use o botão Ver Fatura para conferir o detalhe.", "erro");
-      }
+  try {
+    mostrarStatus("Lendo fatura selecionada...", "info");
+
+    const resposta = await fetch(
+      `${CONFIG.appsScriptUrl}?action=pdf&periodo=${encodeURIComponent(selecionado.periodo)}&cartaoFinal=${encodeURIComponent(selecionado.cartaoFinal)}`
+    );
+
+    const dados = await resposta.json();
+
+    if (!dados.success) {
+      throw new Error(dados.message || "Não foi possível buscar a fatura.");
     }
 
+    selecionado.pdfUrl = dados.url;
+
+    const bytes = base64ParaUint8Array(dados.base64);
+    const texto = await extrairTextoPdfPorBytes(bytes);
+
+    const agrupado = agruparLancamentosPorData(texto);
+    renderizarResumoPdf(agrupado, valorFatura);
+
+    mostrarStatus("Fatura analisada com sucesso.", "ok");
+
+  } catch (erro) {
+    el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Não foi possível identificar os lançamentos do PDF automaticamente.</td></tr>`;
+    mostrarStatus("Não foi possível ler o PDF automaticamente. Use o botão Ver Fatura para conferir o detalhe.", "erro");
+  }
+}
+
+    function base64ParaUint8Array(base64) {
+  const binario = atob(base64);
+  const tamanho = binario.length;
+  const bytes = new Uint8Array(tamanho);
+
+  for (let i = 0; i < tamanho; i++) {
+    bytes[i] = binario.charCodeAt(i);
+  }
+
+  return bytes;
+}
+
+async function extrairTextoPdfPorBytes(bytes) {
+  const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+  let textoCompleto = "";
+
+  for (let pagina = 1; pagina <= pdf.numPages; pagina++) {
+    const page = await pdf.getPage(pagina);
+    const content = await page.getTextContent();
+    textoCompleto += "\n" + content.items.map(item => item.str).join(" ");
+  }
+
+  return textoCompleto;
+}
     async function extrairTextoPdf(url) {
       const pdf = await pdfjsLib.getDocument({ url }).promise;
       let textoCompleto = "";
