@@ -294,6 +294,16 @@
 .copy-btn:hover {
   background: #DDF4FF;
 }
+    .select-status {
+  border: 1px solid var(--cinza-borda);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--azul-escuro);
+  background: var(--branco);
+  font-weight: 700;
+  outline: none;
+}
     @media (max-width: 850px) {
       .toolbar { grid-template-columns: 1fr; }
       .btn { width: 100%; }
@@ -320,6 +330,11 @@
           <span>🔎</span>
           <input id="filtro" type="text" placeholder="Pesquisar por cliente, mês, ano ou final do cartão" />
         </label>
+        <select id="filtroStatus" class="select-status">
+  <option value="pendentes">Pendentes</option>
+  <option value="finalizados">Finalizados</option>
+  <option value="todos">Todos</option>
+</select>
         <button class="btn btn-light" id="btnAtualizar" type="button">Atualizar</button>
         <button class="btn btn-primary" id="btnSalvar" type="button">Salvar APs</button>
       </div>
@@ -339,10 +354,11 @@
               <th>AP CPA</th>
               <th>AP CRE</th>
               <th>Fatura</th>
+<th>Finalizado</th>
             </tr>
           </thead>
           <tbody id="tabelaLancamentos">
-            <tr><td colspan="9" class="empty">Carregando lançamentos...</td></tr>
+            <tr><td colspan="10" class="empty">Carregando lançamentos...</td></tr>
           </tbody>
         </table>
       </div>
@@ -397,6 +413,7 @@
 
     const el = {
       filtro: document.getElementById("filtro"),
+      filtroStatus: document.getElementById("filtroStatus"),
       tabela: document.getElementById("tabelaLancamentos"),
       status: document.getElementById("status"),
       btnAtualizar: document.getElementById("btnAtualizar"),
@@ -469,13 +486,14 @@
         documentoDigitado: pegarCampo(item, ["Documento Digitado"]),
         apCpa: pegarCampo(item, ["AP CPA", "AP_CPA"]),
         apCre: pegarCampo(item, ["AP CRE", "AP_CRE"]),
+        finalizado: normalizar(pegarCampo(item, ["Finalizado"])) === "sim",
         pdfUrl: pegarCampo(item, ["Link PDF", "PDF", "Fatura PDF", "URL PDF"])
       };
     }
 
     async function carregarLancamentos() {
       if (CONFIG.appsScriptUrl.includes("COLE_AQUI")) {
-        el.tabela.innerHTML = `<tr><td colspan="9" class="empty">Aguardando a URL do Apps Script para carregar os lançamentos.</td></tr>`;
+        el.tabela.innerHTML = `<tr><td colspan="10" class="empty">Aguardando a URL do Apps Script para carregar os lançamentos.</td></tr>`;
         return;
       }
 
@@ -491,30 +509,40 @@ lancamentos = (dados.data || []).map(montarLancamento);
         aplicarFiltro();
         mostrarStatus("Lançamentos atualizados com sucesso.", "ok");
       } catch (erro) {
-        el.tabela.innerHTML = `<tr><td colspan="9" class="empty">Não foi possível carregar os lançamentos.</td></tr>`;
+        el.tabela.innerHTML = `<tr><td colspan="10" class="empty">Não foi possível carregar os lançamentos.</td></tr>`;
         mostrarStatus(erro.message, "erro");
       }
     }
 
     function aplicarFiltro() {
-      const termo = normalizar(el.filtro.value);
-      lancamentosFiltrados = lancamentos.filter(item => {
-        const base = normalizar([
-          item.periodo,
-          item.cartaoFinal,
-          item.proprietario,
-          item.valor,
-          item.historico,
-          item.documentoDigitado
-        ].join(" "));
-        return base.includes(termo);
-      });
-      renderizarTabela();
-    }
+  const termo = normalizar(el.filtro.value);
+  const status = el.filtroStatus.value;
+
+  lancamentosFiltrados = lancamentos.filter(item => {
+    const base = normalizar([
+      item.periodo,
+      item.cartaoFinal,
+      item.proprietario,
+      item.valor,
+      item.historico,
+      item.documentoDigitado
+    ].join(" "));
+
+    const passaTexto = base.includes(termo);
+    const passaStatus =
+      status === "todos" ||
+      (status === "pendentes" && !item.finalizado) ||
+      (status === "finalizados" && item.finalizado);
+
+    return passaTexto && passaStatus;
+  });
+
+  renderizarTabela();
+}
 
     function renderizarTabela() {
       if (!lancamentosFiltrados.length) {
-        el.tabela.innerHTML = `<tr><td colspan="9" class="empty">Nenhum lançamento encontrado.</td></tr>`;
+        el.tabela.innerHTML = `<tr><td colspan="10" class="empty">Nenhum lançamento encontrado.</td></tr>`;
         return;
       }
 
@@ -539,6 +567,15 @@ lancamentos = (dados.data || []).map(montarLancamento);
 <td><input class="input-ap" inputmode="numeric" data-campo="apCpa" data-id="${item.id}" value="${item.apCpa || ""}" /></td>
           <td><input class="input-ap" inputmode="numeric" data-campo="apCre" data-id="${item.id}" value="${item.apCre || ""}" /></td>
           <td><button class="btn btn-light" type="button" data-pdf="${item.id}">Selecionar</button></td>
+<td>
+  <input 
+    type="checkbox" 
+    class="check-finalizado" 
+    data-id="${item.id}" 
+    ${item.finalizado ? "checked" : ""} 
+    title="Marcar como finalizado"
+  />
+</td>
         </tr>
       `).join("");
     }
@@ -575,10 +612,11 @@ lancamentos = (dados.data || []).map(montarLancamento);
     const resposta = await fetch(CONFIG.appsScriptUrl, {
       method: "POST",
       body: JSON.stringify({
-        rowIndex: selecionado.id,
-        apCpa: somenteNumeros(selecionado.apCpa),
-        apCre: somenteNumeros(selecionado.apCre)
-      })
+  rowIndex: selecionado.rowIndex || selecionado.id,
+  apCpa: somenteNumeros(selecionado.apCpa),
+  apCre: somenteNumeros(selecionado.apCre),
+  finalizado: selecionado.finalizado === true
+})
     });
 
     const dados = await resposta.json();
@@ -701,6 +739,7 @@ lancamentos = (dados.data || []).map(montarLancamento);
     }
 
     el.filtro.addEventListener("input", aplicarFiltro);
+    el.filtroStatus.addEventListener("change", aplicarFiltro);
     el.btnAtualizar.addEventListener("click", carregarLancamentos);
     el.btnSalvar.addEventListener("click", salvarAPs);
     el.btnVerFatura.addEventListener("click", () => {
@@ -714,6 +753,23 @@ lancamentos = (dados.data || []).map(montarLancamento);
     });
 
      el.tabela.addEventListener("click", event => {
+       const checkFinalizado = event.target.closest(".check-finalizado");
+
+if (checkFinalizado) {
+  const id = checkFinalizado.dataset.id;
+  const item = lancamentos.find(l => String(l.id) === String(id));
+
+  if (item) {
+    item.finalizado = checkFinalizado.checked;
+    selecionado = item;
+
+    salvarAPs().then(() => {
+      aplicarFiltro();
+    });
+  }
+
+  return;
+}
   const botaoCopiar = event.target.closest(".copy-btn");
 
   if (botaoCopiar) {
