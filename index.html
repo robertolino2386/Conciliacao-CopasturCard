@@ -711,9 +711,11 @@ lancamentos = (dados.data || []).map(montarLancamento);
     selecionado.pdfUrl = dados.url;
 
     const bytes = base64ParaUint8Array(dados.base64);
-    const texto = await extrairTextoPdfPorBytes(bytes);
+  const texto = await extrairTextoPdfPorBytes(bytes);
 
-    const agrupado = agruparLancamentosPorData(texto);
+console.log("TEXTO EXTRAÍDO DO PDF:", texto);
+
+const agrupado = agruparLancamentosPorData(texto);
     renderizarResumoPdf(agrupado, valorFatura);
 
     mostrarStatus("Fatura analisada com sucesso.", "ok");
