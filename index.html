@@ -768,15 +768,19 @@ function agruparLancamentosPorData(texto) {
     .replace(/\s+/g, " ")
     .trim();
 
-  const regex = /(\d{2}\/\d{2}\/\d{4})\s+.*?\s+(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*,\d{2})/g;
-
+  const regex = /(\d{2}\/\d{2}\/\d{4})(.*?)(?=\d{2}\/\d{2}\/\d{4}|$)/g;
   let match;
 
   while ((match = regex.exec(textoLimpo)) !== null) {
     const data = match[1];
-    const valor = moedaParaNumero(match[2]);
+    const bloco = match[2] || "";
 
-    if (!data || !valor) continue;
+    const valores = [...bloco.matchAll(/R\$\s*(\d{1,3}(?:\.\d{3})*,\d{2})/g)]
+      .map(v => moedaParaNumero(v[1]));
+
+    if (!valores.length) continue;
+
+    const valor = valores[valores.length - 1];
 
     const atual = mapa.get(data) || {
       data: data,
@@ -792,7 +796,6 @@ function agruparLancamentosPorData(texto) {
 
   return [...mapa.values()].sort((a, b) => converterData(a.data) - converterData(b.data));
 }
-
     function converterData(data) {
       const partes = data.split("/").map(Number);
       const dia = partes[0];
