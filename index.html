@@ -698,10 +698,11 @@ lancamentos = (dados.data || []).map(montarLancamento);
   try {
     mostrarStatus("Lendo fatura selecionada...", "info");
 
-    const resposta = await fetch(
-      `${CONFIG.appsScriptUrl}?action=pdf&periodo=${encodeURIComponent(selecionado.periodo)}&cartaoFinal=${encodeURIComponent(selecionado.cartaoFinal)}`
-    );
+    const urlPdf = `${CONFIG.appsScriptUrl}?action=pdf&periodo=${encodeURIComponent(selecionado.periodo)}&cartaoFinal=${encodeURIComponent(somenteNumeros(selecionado.cartaoFinal).slice(-4))}`;
 
+    console.log("URL FATURA:", urlPdf);
+
+    const resposta = await fetch(urlPdf);
     const dados = await resposta.json();
 
     if (!dados.success) {
@@ -710,34 +711,24 @@ lancamentos = (dados.data || []).map(montarLancamento);
 
     selecionado.pdfUrl = dados.url;
 
-  selecionado.pdfUrl = dados.url;
+    const texto = dados.html || "";
 
-const texto = dados.html || "";
+    console.log("HTML/TEXTO DA FATURA:", texto);
 
-console.log("HTML/TEXTO DA FATURA:", texto);
+    const agrupado = agruparLancamentosPorData(texto);
+    renderizarResumoPdf(agrupado, valorFatura);
 
-const agrupado = agruparLancamentosPorData(texto);
-renderizarResumoPdf(agrupado, valorFatura);
+    mostrarStatus("Fatura analisada com sucesso.", "ok");
 
-  console.log("TEXTO EXTRAÍDO DO PDF:", texto);
-  
-  const agrupado = agruparLancamentosPorData(texto);
-      renderizarResumoPdf(agrupado, valorFatura);
-  
-      mostrarStatus("Fatura analisada com sucesso.", "ok");
-  
-    } catch (erro) {
-    console.error("ERRO PDF:", erro);
-  
+  } catch (erro) {
+    console.error("ERRO FATURA:", erro);
+
     el.tabelaResumoPdf.innerHTML =
-      `<tr><td colspan="3" class="empty">${erro.message}</td></tr>`;
-  
-    mostrarStatus(
-      "Erro PDF: " + erro.message,
-      "erro"
-    );
+      `<tr><td colspan="3" class="empty">${erro.message || "Não foi possível ler a fatura."}</td></tr>`;
+
+    mostrarStatus("Erro fatura: " + (erro.message || "Falha na leitura."), "erro");
   }
-  }
+}
       function base64ParaUint8Array(base64) {
     const binario = atob(base64);
     const tamanho = binario.length;
