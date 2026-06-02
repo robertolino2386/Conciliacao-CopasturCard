@@ -10,15 +10,19 @@
   <style>
     :root {
       --azul-escuro: #00285C;
+      --azul-header: #063f86;
       --azul-claro: #00AEEF;
       --azul-suave: #EAF7FF;
-      --cinza-fundo: #F6F8FB;
+      --cinza-fundo: #F5F7FA;
       --cinza-borda: #D8E1EC;
+      --cinza-texto: #667085;
       --texto: #1E2A36;
       --branco: #FFFFFF;
       --verde: #14A44D;
+      --laranja: #F59E0B;
       --vermelho: #DC3545;
-      --sombra: 0 10px 30px rgba(0, 40, 92, 0.10);
+      --sombra: 0 12px 32px rgba(0, 40, 92, 0.12);
+      --sombra-leve: 0 6px 18px rgba(0, 40, 92, 0.08);
     }
 
     * { box-sizing: border-box; }
@@ -31,28 +35,45 @@
     }
 
     header {
-      background: linear-gradient(135deg, var(--azul-escuro), #064A9B);
+      background: linear-gradient(135deg, var(--azul-escuro), #0751A7);
       color: var(--branco);
-      padding: 26px 22px;
+      padding: 26px 28px;
       box-shadow: var(--sombra);
+    }
+
+    .header-content {
+      width: min(1560px, 100%);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
     }
 
     header h1 {
       margin: 0;
-      font-size: clamp(22px, 3vw, 34px);
-      font-weight: 800;
-      letter-spacing: -0.5px;
+      font-size: clamp(24px, 3vw, 38px);
+      font-weight: 900;
+      letter-spacing: -0.8px;
     }
 
     header p {
       margin: 8px 0 0;
-      opacity: 0.9;
+      opacity: 0.92;
       font-size: 15px;
     }
 
+    .logo-copastur {
+      font-size: clamp(34px, 5vw, 64px);
+      font-weight: 900;
+      letter-spacing: 1px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
     main {
-      width: min(1500px, calc(100% - 28px));
-      margin: 24px auto 50px;
+      width: min(1560px, calc(100% - 34px));
+      margin: 22px auto 44px;
     }
 
     .card {
@@ -64,32 +85,37 @@
       margin-bottom: 22px;
     }
 
+    .top-panel {
+      display: grid;
+      grid-template-columns: minmax(420px, 1fr) auto;
+      gap: 18px;
+      padding: 18px;
+      align-items: stretch;
+      border-bottom: 1px solid var(--cinza-borda);
+    }
+
     .toolbar {
       display: grid;
-      grid-template-columns: 1fr auto auto;
+      grid-template-columns: minmax(220px, 1fr) 150px 130px minmax(160px, 1fr);
       gap: 12px;
       align-items: center;
-      padding: 18px;
-      border-bottom: 1px solid var(--cinza-borda);
-      background: var(--branco);
     }
 
     .search-box {
       display: flex;
       align-items: center;
       gap: 10px;
-      background: var(--cinza-fundo);
+      background: var(--branco);
       border: 1px solid var(--cinza-borda);
       border-radius: 14px;
       padding: 0 14px;
-      min-height: 46px;
+      min-height: 48px;
+      box-shadow: inset 0 1px 0 rgba(0,0,0,0.02);
     }
 
-    .search-box span { color: var(--azul-escuro); font-weight: 700; }
+    .search-box span { color: var(--azul-escuro); font-weight: 800; }
 
-    input, button {
-      font-family: inherit;
-    }
+    input, button, select { font-family: inherit; }
 
     .search-box input {
       width: 100%;
@@ -100,20 +126,34 @@
       color: var(--texto);
     }
 
+    .select-status {
+      border: 1px solid var(--cinza-borda);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--azul-escuro);
+      background: var(--branco);
+      font-weight: 800;
+      outline: none;
+      min-height: 48px;
+    }
+
     .btn {
       border: 0;
       border-radius: 12px;
       padding: 13px 18px;
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       transition: 0.2s ease;
       white-space: nowrap;
+      min-height: 46px;
     }
 
     .btn-primary {
       background: var(--azul-escuro);
       color: var(--branco);
+      box-shadow: 0 5px 12px rgba(0, 40, 92, 0.18);
     }
 
     .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
@@ -126,16 +166,38 @@
 
     .btn-light:hover { background: #DDF4FF; }
 
-    .btn-success {
-      background: var(--verde);
-      color: var(--branco);
-    }
-
     .btn:disabled {
       opacity: 0.55;
       cursor: not-allowed;
       transform: none;
     }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 160px);
+      gap: 12px;
+    }
+
+    .kpi-card {
+      min-height: 78px;
+      border: 1px solid var(--cinza-borda);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--sombra-leve);
+    }
+
+    .kpi-card.total { background: linear-gradient(135deg, #F4FAFF, #E9F6FF); }
+    .kpi-card.done { background: linear-gradient(135deg, #F0FFF7, #E7F8EF); }
+    .kpi-card.pending { background: linear-gradient(135deg, #FFF8EA, #FFF1D6); }
+
+    .kpi-label { font-size: 13px; font-weight: 800; color: var(--texto); margin-bottom: 8px; }
+    .kpi-value { font-size: 26px; line-height: 1; font-weight: 900; color: var(--azul-escuro); }
+    .kpi-card.done .kpi-value { color: var(--verde); }
+    .kpi-card.pending .kpi-value { color: var(--laranja); }
+    .kpi-icon { font-size: 26px; opacity: 0.78; }
 
     .status {
       padding: 12px 18px;
@@ -149,15 +211,12 @@
     .status.erro { color: var(--vermelho); background: #FFF0F1; }
     .status.info { color: var(--azul-escuro); background: var(--azul-suave); }
 
-    .table-wrap {
-      width: 100%;
-      overflow: auto;
-    }
+    .table-wrap { width: 100%; overflow: auto; }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1180px;
+      min-width: 1380px;
     }
 
     thead th {
@@ -167,39 +226,47 @@
       background: var(--azul-escuro);
       color: var(--branco);
       text-align: left;
-      font-size: 13px;
-      padding: 13px 12px;
-      border-right: 1px solid rgba(255,255,255,0.16);
+      font-size: 12px;
+      line-height: 1.1;
+      padding: 13px 10px;
+      border-right: 1px solid rgba(255,255,255,0.2);
     }
 
     tbody td {
-      padding: 12px;
+      padding: 14px 10px;
       border-bottom: 1px solid var(--cinza-borda);
       font-size: 14px;
       vertical-align: middle;
     }
 
-    tbody tr {
-      cursor: pointer;
-      transition: 0.15s ease;
-    }
-
+    tbody tr { transition: 0.15s ease; }
     tbody tr:hover { background: var(--azul-suave); }
     tbody tr.selecionado { background: #DDF4FF; outline: 2px solid var(--azul-claro); }
 
+    .col-periodo { width: 78px; }
+    .col-cartao { width: 74px; }
+    .col-prop { width: 260px; }
+    .col-valor { width: 120px; }
+    .col-hist { width: 360px; }
+    .col-doc { width: 138px; }
+    .col-ap { width: 130px; }
+    .col-action { width: 105px; text-align: center; }
+    .col-finalizado { width: 90px; text-align: center; }
+
     .valor {
-      font-weight: 800;
+      font-weight: 900;
       color: var(--azul-escuro);
       white-space: nowrap;
     }
 
     .input-ap {
-      width: 120px;
+      width: 112px;
       border: 1px solid var(--cinza-borda);
       border-radius: 10px;
       padding: 10px 11px;
       font-size: 14px;
       outline: none;
+      background: var(--branco);
     }
 
     .input-ap:focus {
@@ -207,55 +274,93 @@
       box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.14);
     }
 
-    .pdf-area {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      padding: 18px;
-    }
-
-    .pdf-head {
+    .copy-cell {
       display: flex;
-      justify-content: space-between;
-      gap: 12px;
       align-items: center;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
     }
 
-    .pdf-head h2 {
-      margin: 0;
-      color: var(--azul-escuro);
-      font-size: 20px;
-    }
+    .copy-cell span { flex: 1; }
 
-    .resumo-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(160px, 1fr));
-      gap: 12px;
-    }
-
-    .metric {
+    .copy-btn, .btn-plus {
       border: 1px solid var(--cinza-borda);
-      background: var(--cinza-fundo);
-      border-radius: 14px;
-      padding: 14px;
-    }
-
-    .metric small {
-      display: block;
-      color: #667085;
-      margin-bottom: 6px;
-    }
-
-    .metric strong {
+      background: var(--azul-suave);
       color: var(--azul-escuro);
-      font-size: 18px;
+      border-radius: 9px;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-weight: 900;
+    }
+
+    .copy-btn { padding: 6px 8px; font-size: 14px; }
+    .copy-btn:hover, .btn-plus:hover { background: #DDF4FF; }
+
+    .btn-table {
+      background: var(--azul-escuro);
+      color: var(--branco);
+      border: 0;
+      border-radius: 11px;
+      padding: 10px 13px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 40, 92, 0.16);
+    }
+
+    .btn-table:hover { filter: brightness(1.08); }
+
+    .btn-plus {
+      width: 42px;
+      height: 38px;
+      font-size: 25px;
+      line-height: 1;
+    }
+
+    .check-finalizado {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
     }
 
     .empty {
       padding: 30px 18px;
       text-align: center;
-      color: #667085;
+      color: var(--cinza-texto);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.58);
+      backdrop-filter: blur(2px);
+      z-index: 99;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+    }
+
+    .modal-overlay.show { display: flex; }
+
+    .modal-card {
+      background: var(--branco);
+      border-radius: 18px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--cinza-borda);
+      width: min(1180px, 96vw);
+      max-height: 90vh;
+      overflow: auto;
+    }
+
+    .modal-body { padding: 18px; }
+
+    .modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
     .pill {
@@ -267,49 +372,85 @@
       background: var(--azul-suave);
       color: var(--azul-escuro);
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 900;
     }
-.copy-cell {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
 
-.copy-cell span {
-  flex: 1;
-}
+    .modal-head h2 {
+      margin: 8px 0 0;
+      color: var(--azul-escuro);
+      font-size: 18px;
+      line-height: 1.25;
+    }
 
-.copy-btn {
-  border: 1px solid var(--cinza-borda);
-  background: var(--azul-suave);
-  color: var(--azul-escuro);
-  border-radius: 8px;
-  padding: 6px 8px;
-  cursor: pointer;
-  font-size: 14px;
-  flex-shrink: 0;
-}
+    .modal-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-.copy-btn:hover {
-  background: #DDF4FF;
-}
-    .select-status {
-  border: 1px solid var(--cinza-borda);
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 14px;
-  color: var(--azul-escuro);
-  background: var(--branco);
-  font-weight: 700;
-  outline: none;
-}
+    .btn-close-x {
+      background: transparent;
+      border: 0;
+      color: var(--azul-escuro);
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+
+    .resumo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric {
+      border: 1px solid var(--cinza-borda);
+      background: var(--cinza-fundo);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .metric small {
+      display: block;
+      color: var(--cinza-texto);
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    .metric strong {
+      color: var(--azul-escuro);
+      font-size: 18px;
+    }
+
+    .metric strong.ok { color: var(--verde); }
+    .metric strong.erro { color: var(--vermelho); }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding: 16px 18px;
+      border-top: 1px solid var(--cinza-borda);
+      background: #FBFCFE;
+    }
+
+    @media (max-width: 1180px) {
+      .top-panel { grid-template-columns: 1fr; }
+      .metrics-row { grid-template-columns: repeat(3, 1fr); }
+      .toolbar { grid-template-columns: 1fr auto auto auto; }
+    }
+
     @media (max-width: 850px) {
+      header { padding: 22px 16px; }
+      .header-content { align-items: flex-start; flex-direction: column; }
+      .logo-copastur { font-size: 36px; }
+      main { width: calc(100% - 18px); margin-top: 14px; }
       .toolbar { grid-template-columns: 1fr; }
+      .metrics-row { grid-template-columns: 1fr; }
       .btn { width: 100%; }
       .resumo-grid { grid-template-columns: 1fr 1fr; }
-      main { width: calc(100% - 18px); margin-top: 14px; }
-      header { padding: 22px 16px; }
+      .modal-overlay { padding: 12px; }
     }
 
     @media (max-width: 520px) {
@@ -319,24 +460,57 @@
 </head>
 <body>
   <header>
-    <h1>Conciliação Extrato CopasturCard</h1>
-    <p>Controle dos lançamentos, AP CPA, AP CRE e conferência da fatura do cartão.</p>
+    <div class="header-content">
+      <div>
+        <h1>Conciliação Extrato CopasturCard</h1>
+        <p>Controle dos lançamentos, AP CPA, AP CRE e conferência da fatura do cartão.</p>
+      </div>
+      <div class="logo-copastur">COPASTUR</div>
+    </div>
   </header>
 
   <main>
     <section class="card">
-      <div class="toolbar">
-        <label class="search-box" for="filtro">
-          <span>🔎</span>
-          <input id="filtro" type="text" placeholder="Pesquisar por cliente, mês, ano ou final do cartão" />
-        </label>
-        <select id="filtroStatus" class="select-status">
-  <option value="pendentes">Pendentes</option>
-  <option value="finalizados">Finalizados</option>
-  <option value="todos">Todos</option>
-</select>
-        <button class="btn btn-light" id="btnAtualizar" type="button">Atualizar</button>
-        <button class="btn btn-primary" id="btnSalvar" type="button">Salvar APs</button>
+      <div class="top-panel">
+        <div class="toolbar">
+          <label class="search-box" for="filtro">
+            <span>🔎</span>
+            <input id="filtro" type="text" placeholder="Pesquisar por cliente, mês, ano ou final do cartão" />
+          </label>
+
+          <select id="filtroStatus" class="select-status">
+            <option value="pendentes">Pendentes</option>
+            <option value="finalizados">Finalizados</option>
+            <option value="todos">Todos</option>
+          </select>
+
+          <button class="btn btn-light" id="btnAtualizar" type="button">↻ Atualizar</button>
+          <button class="btn btn-primary" id="btnSalvar" type="button">▣ Salvar APs</button>
+        </div>
+
+        <div class="metrics-row">
+          <div class="kpi-card total">
+            <div>
+              <div class="kpi-label">Qtd Total</div>
+              <div class="kpi-value" id="kpiTotal">0</div>
+            </div>
+            <div class="kpi-icon">👥</div>
+          </div>
+          <div class="kpi-card done">
+            <div>
+              <div class="kpi-label">Qtd Finalizadas</div>
+              <div class="kpi-value" id="kpiFinalizadas">0</div>
+            </div>
+            <div class="kpi-icon">✓</div>
+          </div>
+          <div class="kpi-card pending">
+            <div>
+              <div class="kpi-label">Qtd Pendentes</div>
+              <div class="kpi-value" id="kpiPendentes">0</div>
+            </div>
+            <div class="kpi-icon">◷</div>
+          </div>
+        </div>
       </div>
 
       <div id="status" class="status"></div>
@@ -345,39 +519,45 @@
         <table>
           <thead>
             <tr>
-              <th>Período</th>
-              <th>Cartão Final</th>
-              <th>Proprietário</th>
-              <th>Valor</th>
-              <th>Histórico</th>
-              <th>Documento Digitado</th>
-              <th>AP CPA</th>
-              <th>AP CRE</th>
-              <th>Fatura</th>
-<th>Finalizado</th>
+              <th class="col-periodo">Período</th>
+              <th class="col-cartao">Cartão<br>Final</th>
+              <th class="col-prop">Proprietário</th>
+              <th class="col-valor">Valor</th>
+              <th class="col-hist">Histórico</th>
+              <th class="col-doc">Documento<br>Digitado</th>
+              <th class="col-ap">AP CPA</th>
+              <th class="col-ap">AP CRE</th>
+              <th class="col-action">Fatura</th>
+              <th class="col-action">Ver<br>Valores</th>
+              <th class="col-finalizado">Finalizado</th>
             </tr>
           </thead>
           <tbody id="tabelaLancamentos">
-            <tr><td colspan="10" class="empty">Carregando lançamentos...</td></tr>
+            <tr><td colspan="11" class="empty">Carregando lançamentos...</td></tr>
           </tbody>
         </table>
       </div>
     </section>
+  </main>
 
-    <section class="card">
-      <div class="pdf-area">
-        <div class="pdf-head">
+  <div class="modal-overlay" id="modalResumo" aria-hidden="true">
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="tituloFatura">
+      <div class="modal-body">
+        <div class="modal-head">
           <div>
             <span class="pill">Fatura selecionada</span>
             <h2 id="tituloFatura">Selecione um lançamento para conciliar</h2>
           </div>
-          <button class="btn btn-primary" id="btnVerFatura" type="button" disabled>Ver Fatura</button>
+          <div class="modal-actions">
+            <button class="btn btn-primary" id="btnFecharModalTopo" type="button">Fechar</button>
+            <button class="btn-close-x" id="btnFecharModalX" type="button" aria-label="Fechar">×</button>
+          </div>
         </div>
 
         <div class="resumo-grid">
           <div class="metric"><small>Total da fatura selecionada</small><strong id="metricValor">R$ 0,00</strong></div>
           <div class="metric"><small>Quantidade de datas</small><strong id="metricDatas">0</strong></div>
-          <div class="metric"><small>Soma identificada no PDF</small><strong id="metricSomaPdf">R$ 0,00</strong></div>
+          <div class="metric"><small>Soma identificada na fatura</small><strong id="metricSomaPdf">R$ 0,00</strong></div>
           <div class="metric"><small>Diferença</small><strong id="metricDiferenca">R$ 0,00</strong></div>
         </div>
 
@@ -391,13 +571,16 @@
               </tr>
             </thead>
             <tbody id="tabelaResumoPdf">
-              <tr><td colspan="3" class="empty">O resumo por data aparecerá aqui após selecionar um lançamento com PDF.</td></tr>
+              <tr><td colspan="3" class="empty">O resumo por data aparecerá aqui após clicar em Ver Valores.</td></tr>
             </tbody>
           </table>
         </div>
       </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" id="btnFecharModalRodape" type="button">Fechar</button>
+      </div>
     </section>
-  </main>
+  </div>
 
   <script>
     const CONFIG = {
@@ -405,7 +588,9 @@
       nomeGuia: "Base de Cartoes"
     };
 
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    }
 
     let lancamentos = [];
     let lancamentosFiltrados = [];
@@ -418,13 +603,19 @@
       status: document.getElementById("status"),
       btnAtualizar: document.getElementById("btnAtualizar"),
       btnSalvar: document.getElementById("btnSalvar"),
-      btnVerFatura: document.getElementById("btnVerFatura"),
+      modalResumo: document.getElementById("modalResumo"),
+      btnFecharModalTopo: document.getElementById("btnFecharModalTopo"),
+      btnFecharModalX: document.getElementById("btnFecharModalX"),
+      btnFecharModalRodape: document.getElementById("btnFecharModalRodape"),
       tituloFatura: document.getElementById("tituloFatura"),
       tabelaResumoPdf: document.getElementById("tabelaResumoPdf"),
       metricValor: document.getElementById("metricValor"),
       metricDatas: document.getElementById("metricDatas"),
       metricSomaPdf: document.getElementById("metricSomaPdf"),
-      metricDiferenca: document.getElementById("metricDiferenca")
+      metricDiferenca: document.getElementById("metricDiferenca"),
+      kpiTotal: document.getElementById("kpiTotal"),
+      kpiFinalizadas: document.getElementById("kpiFinalizadas"),
+      kpiPendentes: document.getElementById("kpiPendentes")
     };
 
     function mostrarStatus(texto, tipo = "info") {
@@ -441,6 +632,15 @@
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function escaparHtml(valor) {
+      return String(valor ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
     function somenteNumeros(valor) {
@@ -473,45 +673,50 @@
       }
       return "";
     }
-function montarUrlFatura(periodo, cartaoFinal) {
-  const codigoPeriodo = montarCodigoPeriodo(periodo);
-  const finalCartao = somenteNumeros(cartaoFinal).slice(-4);
 
-  if (!codigoPeriodo || !finalCartao) return "";
+    function montarUrlFatura(periodo, cartaoFinal) {
+      const codigoPeriodo = montarCodigoPeriodo(periodo);
+      const finalCartao = somenteNumeros(cartaoFinal).slice(-4);
 
-  return `https://starkcard.carddashtool.com/cps/gerabill/bill_cta_${codigoPeriodo}.php?cardEnding=${finalCartao}`;
-}
+      if (!codigoPeriodo || !finalCartao) return "";
 
-function montarCodigoPeriodo(periodo) {
-  const partes = String(periodo || "").split("/");
-  const mes = partes[0]?.padStart(2, "0");
-  const ano = partes[1]?.slice(-2);
+      return `https://starkcard.carddashtool.com/cps/gerabill/bill_cta_${codigoPeriodo}.php?cardEnding=${finalCartao}`;
+    }
 
-  const meses = {
-    "01": "jan",
-    "02": "fev",
-    "03": "mar",
-    "04": "abr",
-    "05": "mai",
-    "06": "jun",
-    "07": "jul",
-    "08": "ago",
-    "09": "set",
-    "10": "out",
-    "11": "nov",
-    "12": "dez"
-  };
+    function montarCodigoPeriodo(periodo) {
+      const partes = String(periodo || "").split("/");
+      const mes = partes[0]?.padStart(2, "0");
+      const ano = partes[1]?.slice(-2);
 
-  if (!meses[mes] || !ano) return "";
+      const meses = {
+        "01": "jan",
+        "02": "fev",
+        "03": "mar",
+        "04": "abr",
+        "05": "mai",
+        "06": "jun",
+        "07": "jul",
+        "08": "ago",
+        "09": "set",
+        "10": "out",
+        "11": "nov",
+        "12": "dez"
+      };
 
-  return `${meses[mes]}${ano}`;
-}
+      if (!meses[mes] || !ano) return "";
+
+      return `${meses[mes]}${ano}`;
+    }
+
     function montarLancamento(item, index) {
+      const periodo = pegarCampo(item, ["Período", "Periodo"]);
+      const cartaoFinal = pegarCampo(item, ["Cartão Final", "Cartao Final"]);
+
       return {
         id: item.rowIndex || item.id || item.ID || item.linha || item.Linha || index + 2,
         rowIndex: item.rowIndex || index + 2,
-        periodo: pegarCampo(item, ["Período", "Periodo"]),
-        cartaoFinal: pegarCampo(item, ["Cartão Final", "Cartao Final"]),
+        periodo,
+        cartaoFinal,
         proprietario: pegarCampo(item, ["Proprietário", "Proprietario"]),
         valor: pegarCampo(item, ["Valor"]),
         historico: pegarCampo(item, ["Historico", "Histórico"]),
@@ -519,16 +724,13 @@ function montarCodigoPeriodo(periodo) {
         apCpa: pegarCampo(item, ["AP CPA", "AP_CPA"]),
         apCre: pegarCampo(item, ["AP CRE", "AP_CRE"]),
         finalizado: normalizar(pegarCampo(item, ["Finalizado"])) === "sim",
-        pdfUrl: montarUrlFatura(
-  pegarCampo(item, ["Período", "Periodo"]),
-  pegarCampo(item, ["Cartão Final", "Cartao Final"])
-)
+        pdfUrl: montarUrlFatura(periodo, cartaoFinal)
       };
     }
 
     async function carregarLancamentos() {
       if (CONFIG.appsScriptUrl.includes("COLE_AQUI")) {
-        el.tabela.innerHTML = `<tr><td colspan="10" class="empty">Aguardando a URL do Apps Script para carregar os lançamentos.</td></tr>`;
+        el.tabela.innerHTML = `<tr><td colspan="11" class="empty">Aguardando a URL do Apps Script para carregar os lançamentos.</td></tr>`;
         return;
       }
 
@@ -540,270 +742,235 @@ function montarCodigoPeriodo(periodo) {
 
         if (!dados.success) throw new Error(dados.message || "Não foi possível carregar os lançamentos.");
 
-lancamentos = (dados.data || []).map(montarLancamento);
+        lancamentos = (dados.data || []).map(montarLancamento);
+        atualizarIndicadores();
         aplicarFiltro();
         mostrarStatus("Lançamentos atualizados com sucesso.", "ok");
       } catch (erro) {
-        el.tabela.innerHTML = `<tr><td colspan="10" class="empty">Não foi possível carregar os lançamentos.</td></tr>`;
+        el.tabela.innerHTML = `<tr><td colspan="11" class="empty">Não foi possível carregar os lançamentos.</td></tr>`;
         mostrarStatus(erro.message, "erro");
       }
     }
 
+    function atualizarIndicadores() {
+      const total = lancamentos.length;
+      const finalizadas = lancamentos.filter(item => item.finalizado).length;
+      const pendentes = total - finalizadas;
+
+      el.kpiTotal.textContent = total;
+      el.kpiFinalizadas.textContent = finalizadas;
+      el.kpiPendentes.textContent = pendentes;
+    }
+
     function aplicarFiltro() {
-  const termo = normalizar(el.filtro.value);
-  const status = el.filtroStatus.value;
+      const termo = normalizar(el.filtro.value);
+      const status = el.filtroStatus.value;
 
-  lancamentosFiltrados = lancamentos.filter(item => {
-    const base = normalizar([
-      item.periodo,
-      item.cartaoFinal,
-      item.proprietario,
-      item.valor,
-      item.historico,
-      item.documentoDigitado
-    ].join(" "));
+      lancamentosFiltrados = lancamentos.filter(item => {
+        const base = normalizar([
+          item.periodo,
+          item.cartaoFinal,
+          item.proprietario,
+          item.valor,
+          item.historico,
+          item.documentoDigitado
+        ].join(" "));
 
-    const passaTexto = base.includes(termo);
-    const passaStatus =
-      status === "todos" ||
-      (status === "pendentes" && !item.finalizado) ||
-      (status === "finalizados" && item.finalizado);
+        const passaTexto = base.includes(termo);
+        const passaStatus =
+          status === "todos" ||
+          (status === "pendentes" && !item.finalizado) ||
+          (status === "finalizados" && item.finalizado);
 
-    return passaTexto && passaStatus;
-  });
+        return passaTexto && passaStatus;
+      });
 
-  renderizarTabela();
-}
+      renderizarTabela();
+    }
 
     function renderizarTabela() {
       if (!lancamentosFiltrados.length) {
-        el.tabela.innerHTML = `<tr><td colspan="10" class="empty">Nenhum lançamento encontrado.</td></tr>`;
+        el.tabela.innerHTML = `<tr><td colspan="11" class="empty">Nenhum lançamento encontrado.</td></tr>`;
         return;
       }
 
-      el.tabela.innerHTML = lancamentosFiltrados.map((item, index) => `
+      el.tabela.innerHTML = lancamentosFiltrados.map(item => `
         <tr data-id="${item.id}" class="${selecionado?.id == item.id ? "selecionado" : ""}">
-          <td>${item.periodo || ""}</td>
-          <td>${item.cartaoFinal || ""}</td>
-          <td>${item.proprietario || ""}</td>
+          <td>${escaparHtml(item.periodo)}</td>
+          <td>${escaparHtml(item.cartaoFinal)}</td>
+          <td>${escaparHtml(item.proprietario)}</td>
           <td class="valor">${formatarMoeda(moedaParaNumero(item.valor))}</td>
           <td>
-  <div class="copy-cell">
-    <span>${item.historico || ""}</span>
-    <button class="copy-btn" type="button" data-copy="${encodeURIComponent(item.historico || "")}" title="Copiar histórico">📋</button>
-  </div>
-</td>
-<td>
-  <div class="copy-cell">
-    <span>${item.documentoDigitado || ""}</span>
-    <button class="copy-btn" type="button" data-copy="${encodeURIComponent(item.documentoDigitado || "")}" title="Copiar documento digitado">📋</button>
-  </div>
-</td>
-<td><input class="input-ap" inputmode="numeric" data-campo="apCpa" data-id="${item.id}" value="${item.apCpa || ""}" /></td>
-          <td><input class="input-ap" inputmode="numeric" data-campo="apCre" data-id="${item.id}" value="${item.apCre || ""}" /></td>
-          <td><button class="btn btn-light" type="button" data-pdf="${item.id}">Selecionar</button></td>
-<td>
-  <input 
-    type="checkbox" 
-    class="check-finalizado" 
-    data-id="${item.id}" 
-    ${item.finalizado ? "checked" : ""} 
-    title="Marcar como finalizado"
-  />
-</td>
+            <div class="copy-cell">
+              <span>${escaparHtml(item.historico)}</span>
+              <button class="copy-btn" type="button" data-copy="${encodeURIComponent(item.historico || "")}" title="Copiar histórico">📋</button>
+            </div>
+          </td>
+          <td>
+            <div class="copy-cell">
+              <span>${escaparHtml(item.documentoDigitado)}</span>
+              <button class="copy-btn" type="button" data-copy="${encodeURIComponent(item.documentoDigitado || "")}" title="Copiar documento digitado">📋</button>
+            </div>
+          </td>
+          <td><input class="input-ap" inputmode="numeric" data-campo="apCpa" data-id="${item.id}" value="${escaparHtml(item.apCpa)}" /></td>
+          <td><input class="input-ap" inputmode="numeric" data-campo="apCre" data-id="${item.id}" value="${escaparHtml(item.apCre)}" /></td>
+          <td class="col-action"><button class="btn-table" type="button" data-fatura="${item.id}">Ver<br>Fatura</button></td>
+          <td class="col-action"><button class="btn-plus" type="button" data-valores="${item.id}" title="Ver valores">+</button></td>
+          <td class="col-finalizado">
+            <input type="checkbox" class="check-finalizado" data-id="${item.id}" ${item.finalizado ? "checked" : ""} title="Marcar como finalizado" />
+          </td>
         </tr>
       `).join("");
     }
 
     function atualizarAP(id, campo, valor) {
-  const valorLimpo = somenteNumeros(valor);
+      const valorLimpo = somenteNumeros(valor);
 
-  const item = lancamentos.find(l => String(l.id) === String(id));
-  if (item) item[campo] = valorLimpo;
+      const item = lancamentos.find(l => String(l.id) === String(id));
+      if (item) item[campo] = valorLimpo;
 
-  const filtrado = lancamentosFiltrados.find(l => String(l.id) === String(id));
-  if (filtrado) filtrado[campo] = valorLimpo;
+      const filtrado = lancamentosFiltrados.find(l => String(l.id) === String(id));
+      if (filtrado) filtrado[campo] = valorLimpo;
 
-  if (selecionado && String(selecionado.id) === String(id)) {
-    selecionado[campo] = valorLimpo;
-  }
-}
-
-    async function salvarAPs() {
-  if (CONFIG.appsScriptUrl.includes("COLE_AQUI")) {
-    mostrarStatus("A URL do Apps Script ainda precisa ser informada.", "erro");
-    return;
-  }
-
-  if (!selecionado) {
-    mostrarStatus("Selecione um lançamento antes de salvar.", "erro");
-    return;
-  }
-
-  try {
-    el.btnSalvar.disabled = true;
-    mostrarStatus("Salvando APs...", "info");
-
-    const resposta = await fetch(CONFIG.appsScriptUrl, {
-      method: "POST",
-      body: JSON.stringify({
-  rowIndex: selecionado.rowIndex || selecionado.id,
-  apCpa: somenteNumeros(selecionado.apCpa),
-  apCre: somenteNumeros(selecionado.apCre),
-  finalizado: selecionado.finalizado === true
-})
-    });
-
-    const dados = await resposta.json();
-
-    if (!dados.success) {
-      throw new Error(dados.message || "Não foi possível salvar.");
+      if (selecionado && String(selecionado.id) === String(id)) {
+        selecionado[campo] = valorLimpo;
+      }
     }
 
-    mostrarStatus("APs salvas com sucesso.", "ok");
-    await carregarLancamentos();
+    async function salvarAPs() {
+      if (CONFIG.appsScriptUrl.includes("COLE_AQUI")) {
+        mostrarStatus("A URL do Apps Script ainda precisa ser informada.", "erro");
+        return;
+      }
 
-  } catch (erro) {
-    mostrarStatus(erro.message || "Não foi possível salvar.", "erro");
-  } finally {
-    el.btnSalvar.disabled = false;
-  }
-}
+      if (!selecionado) {
+        mostrarStatus("Selecione um lançamento antes de salvar.", "erro");
+        return;
+      }
+
+      try {
+        el.btnSalvar.disabled = true;
+        mostrarStatus("Salvando APs...", "info");
+
+        const resposta = await fetch(CONFIG.appsScriptUrl, {
+          method: "POST",
+          body: JSON.stringify({
+            rowIndex: selecionado.rowIndex || selecionado.id,
+            apCpa: somenteNumeros(selecionado.apCpa),
+            apCre: somenteNumeros(selecionado.apCre),
+            finalizado: selecionado.finalizado === true
+          })
+        });
+
+        const dados = await resposta.json();
+
+        if (!dados.success) {
+          throw new Error(dados.message || "Não foi possível salvar.");
+        }
+
+        mostrarStatus("APs salvas com sucesso.", "ok");
+        await carregarLancamentos();
+      } catch (erro) {
+        mostrarStatus(erro.message || "Não foi possível salvar.", "erro");
+      } finally {
+        el.btnSalvar.disabled = false;
+      }
+    }
+
     function selecionarLancamento(id) {
       selecionado = lancamentos.find(l => String(l.id) === String(id));
       renderizarTabela();
-      limparResumoPdf();
+      limparResumoFatura();
 
       if (!selecionado) return;
 
       el.tituloFatura.textContent = `${selecionado.periodo || ""} - ${selecionado.cartaoFinal || ""} - ${selecionado.proprietario || ""}`;
       el.metricValor.textContent = formatarMoeda(moedaParaNumero(selecionado.valor));
-      el.btnVerFatura.disabled = !selecionado.pdfUrl;
-
-      if (selecionado.pdfUrl) {
-        analisarPdf(selecionado.pdfUrl, moedaParaNumero(selecionado.valor));
-      } else {
-        el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Este lançamento ainda não possui link de PDF vinculado.</td></tr>`;
-      }
     }
 
-    function limparResumoPdf() {
+    function abrirModalResumo() {
+      el.modalResumo.classList.add("show");
+      el.modalResumo.setAttribute("aria-hidden", "false");
+    }
+
+    function fecharModalResumo() {
+      el.modalResumo.classList.remove("show");
+      el.modalResumo.setAttribute("aria-hidden", "true");
+    }
+
+    function limparResumoFatura() {
       el.metricDatas.textContent = "0";
       el.metricSomaPdf.textContent = formatarMoeda(0);
       el.metricDiferenca.textContent = formatarMoeda(0);
+      el.metricDiferenca.className = "";
       el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Analisando a fatura selecionada...</td></tr>`;
     }
 
-    async function analisarPdf(pdfUrl, valorFatura) {
-  try {
-    mostrarStatus("Lendo fatura selecionada...", "info");
+    async function analisarFatura(valorFatura) {
+      try {
+        mostrarStatus("Lendo fatura selecionada...", "info");
 
-    const urlPdf = `${CONFIG.appsScriptUrl}?action=pdf&periodo=${encodeURIComponent(selecionado.periodo)}&cartaoFinal=${encodeURIComponent(somenteNumeros(selecionado.cartaoFinal).slice(-4))}`;
+        const urlPdf = `${CONFIG.appsScriptUrl}?action=pdf&periodo=${encodeURIComponent(selecionado.periodo)}&cartaoFinal=${encodeURIComponent(somenteNumeros(selecionado.cartaoFinal).slice(-4))}`;
+        const resposta = await fetch(urlPdf);
+        const dados = await resposta.json();
 
-    console.log("URL FATURA:", urlPdf);
+        if (!dados.success) {
+          throw new Error(dados.message || "Não foi possível buscar a fatura.");
+        }
 
-    const resposta = await fetch(urlPdf);
-    const dados = await resposta.json();
+        selecionado.pdfUrl = dados.url;
+        const texto = dados.html || "";
+        const agrupado = agruparLancamentosPorData(texto);
+        renderizarResumoPdf(agrupado, valorFatura);
 
-    if (!dados.success) {
-      throw new Error(dados.message || "Não foi possível buscar a fatura.");
+        mostrarStatus("Fatura analisada com sucesso.", "ok");
+      } catch (erro) {
+        console.error("ERRO FATURA:", erro);
+        el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">${erro.message || "Não foi possível ler a fatura."}</td></tr>`;
+        mostrarStatus("Erro fatura: " + (erro.message || "Falha na leitura."), "erro");
+      }
     }
 
-    selecionado.pdfUrl = dados.url;
+    function agruparLancamentosPorData(texto) {
+      const mapa = new Map();
 
-    const texto = dados.html || "";
+      const textoLimpo = String(texto || "")
+        .replace(/\s+/g, " ")
+        .trim();
 
-    console.log("HTML/TEXTO DA FATURA:", texto);
+      const regex = /(\d{2}\/\d{2}\/\d{4})(.*?)(?=\d{2}\/\d{2}\/\d{4}|$)/g;
+      let match;
 
-    const agrupado = agruparLancamentosPorData(texto);
-    renderizarResumoPdf(agrupado, valorFatura);
+      while ((match = regex.exec(textoLimpo)) !== null) {
+        const data = match[1];
+        const bloco = match[2] || "";
 
-    mostrarStatus("Fatura analisada com sucesso.", "ok");
+        const valores = [...bloco.matchAll(/R\$\s*(\d{1,3}(?:\.\d{3})*,\d{2})/g)]
+          .map(v => moedaParaNumero(v[1]));
 
-  } catch (erro) {
-    console.error("ERRO FATURA:", erro);
+        if (!valores.length) continue;
 
-    el.tabelaResumoPdf.innerHTML =
-      `<tr><td colspan="3" class="empty">${erro.message || "Não foi possível ler a fatura."}</td></tr>`;
+        const valor = valores[valores.length - 1];
 
-    mostrarStatus("Erro fatura: " + (erro.message || "Falha na leitura."), "erro");
-  }
-}
-      function base64ParaUint8Array(base64) {
-    const binario = atob(base64);
-    const tamanho = binario.length;
-    const bytes = new Uint8Array(tamanho);
-  
-    for (let i = 0; i < tamanho; i++) {
-      bytes[i] = binario.charCodeAt(i);
-    }
-  
-    return bytes;
-  }
+        if (valor === moedaParaNumero(selecionado.valor)) {
+          continue;
+        }
 
-async function extrairTextoPdfPorBytes(bytes) {
-  const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
-  let textoCompleto = "";
+        const atual = mapa.get(data) || {
+          data: data,
+          quantidade: 0,
+          total: 0
+        };
 
-  for (let pagina = 1; pagina <= pdf.numPages; pagina++) {
-    const page = await pdf.getPage(pagina);
-    const content = await page.getTextContent();
-    textoCompleto += "\n" + content.items.map(item => item.str).join(" ");
-  }
+        atual.quantidade += 1;
+        atual.total += valor;
 
-  return textoCompleto;
-}
-    async function extrairTextoPdf(url) {
-      const pdf = await pdfjsLib.getDocument({ url }).promise;
-      let textoCompleto = "";
-
-      for (let pagina = 1; pagina <= pdf.numPages; pagina++) {
-        const page = await pdf.getPage(pagina);
-        const content = await page.getTextContent();
-        textoCompleto += "\n" + content.items.map(item => item.str).join(" ");
+        mapa.set(data, atual);
       }
 
-      return textoCompleto;
+      return [...mapa.values()].sort((a, b) => converterData(a.data) - converterData(b.data));
     }
 
-function agruparLancamentosPorData(texto) {
-  const mapa = new Map();
-
-  const textoLimpo = String(texto || "")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  const regex = /(\d{2}\/\d{2}\/\d{4})(.*?)(?=\d{2}\/\d{2}\/\d{4}|$)/g;
-  let match;
-
-  while ((match = regex.exec(textoLimpo)) !== null) {
-    const data = match[1];
-    const bloco = match[2] || "";
-
-    const valores = [...bloco.matchAll(/R\$\s*(\d{1,3}(?:\.\d{3})*,\d{2})/g)]
-      .map(v => moedaParaNumero(v[1]));
-
-    if (!valores.length) continue;
-
-const valor = valores[valores.length - 1];
-
-if (valor === moedaParaNumero(selecionado.valor)) {
-  continue;
-}
-
-const atual = mapa.get(data) || {
-  data: data,
-  quantidade: 0,
-  total: 0
-};
-    atual.quantidade += 1;
-    atual.total += valor;
-
-    mapa.set(data, atual);
-  }
-
-  return [...mapa.values()].sort((a, b) => converterData(a.data) - converterData(b.data));
-}
     function converterData(data) {
       const partes = data.split("/").map(Number);
       const dia = partes[0];
@@ -814,7 +981,7 @@ const atual = mapa.get(data) || {
 
     function renderizarResumoPdf(agrupado, valorFatura) {
       if (!agrupado.length) {
-        el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Nenhum lançamento com data e valor foi identificado no PDF.</td></tr>`;
+        el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Nenhum lançamento com data e valor foi identificado na fatura.</td></tr>`;
         return;
       }
 
@@ -824,6 +991,7 @@ const atual = mapa.get(data) || {
       el.metricDatas.textContent = agrupado.length;
       el.metricSomaPdf.textContent = formatarMoeda(soma);
       el.metricDiferenca.textContent = formatarMoeda(diferenca);
+      el.metricDiferenca.className = Math.abs(diferenca) < 0.01 ? "ok" : "erro";
 
       el.tabelaResumoPdf.innerHTML = agrupado.map(item => `
         <tr>
@@ -838,8 +1006,16 @@ const atual = mapa.get(data) || {
     el.filtroStatus.addEventListener("change", aplicarFiltro);
     el.btnAtualizar.addEventListener("click", carregarLancamentos);
     el.btnSalvar.addEventListener("click", salvarAPs);
-    el.btnVerFatura.addEventListener("click", () => {
-      if (selecionado?.pdfUrl) window.open(selecionado.pdfUrl, "_blank");
+    el.btnFecharModalTopo.addEventListener("click", fecharModalResumo);
+    el.btnFecharModalX.addEventListener("click", fecharModalResumo);
+    el.btnFecharModalRodape.addEventListener("click", fecharModalResumo);
+
+    el.modalResumo.addEventListener("click", event => {
+      if (event.target === el.modalResumo) fecharModalResumo();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") fecharModalResumo();
     });
 
     el.tabela.addEventListener("input", event => {
@@ -848,48 +1024,62 @@ const atual = mapa.get(data) || {
       atualizarAP(event.target.dataset.id, event.target.dataset.campo, event.target.value);
     });
 
-     el.tabela.addEventListener("click", event => {
-       const checkFinalizado = event.target.closest(".check-finalizado");
+    el.tabela.addEventListener("click", event => {
+      const checkFinalizado = event.target.closest(".check-finalizado");
 
-if (checkFinalizado) {
-  const id = checkFinalizado.dataset.id;
-  const item = lancamentos.find(l => String(l.id) === String(id));
+      if (checkFinalizado) {
+        const id = checkFinalizado.dataset.id;
+        const item = lancamentos.find(l => String(l.id) === String(id));
 
-  if (item) {
-    item.finalizado = checkFinalizado.checked;
-    selecionado = item;
+        if (item) {
+          item.finalizado = checkFinalizado.checked;
+          selecionado = item;
 
-    salvarAPs().then(() => {
-      aplicarFiltro();
+          salvarAPs().then(() => {
+            atualizarIndicadores();
+            aplicarFiltro();
+          });
+        }
+
+        return;
+      }
+
+      const botaoCopiar = event.target.closest(".copy-btn");
+
+      if (botaoCopiar) {
+        const texto = decodeURIComponent(botaoCopiar.dataset.copy || "");
+        navigator.clipboard.writeText(texto);
+        mostrarStatus("Texto copiado.", "ok");
+        return;
+      }
+
+      const botaoFatura = event.target.closest("button[data-fatura]");
+
+      if (botaoFatura) {
+        const item = lancamentos.find(l => String(l.id) === String(botaoFatura.dataset.fatura));
+        if (item?.pdfUrl) window.open(item.pdfUrl, "_blank");
+        return;
+      }
+
+      const botaoValores = event.target.closest("button[data-valores]");
+
+      if (botaoValores) {
+        selecionarLancamento(botaoValores.dataset.valores);
+        abrirModalResumo();
+        if (selecionado?.pdfUrl) {
+          analisarFatura(moedaParaNumero(selecionado.valor));
+        } else {
+          el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Este lançamento ainda não possui link de fatura vinculado.</td></tr>`;
+        }
+        return;
+      }
+
+      if (event.target.classList.contains("input-ap")) return;
+
+      const linha = event.target.closest("tr[data-id]");
+      if (linha) selecionarLancamento(linha.dataset.id);
     });
-  }
 
-  return;
-}
-  const botaoCopiar = event.target.closest(".copy-btn");
-
-  if (botaoCopiar) {
-    const texto = decodeURIComponent(botaoCopiar.dataset.copy || "");
-    navigator.clipboard.writeText(texto);
-    mostrarStatus("Texto copiado.", "ok");
-    return;
-  }
-
-  const botaoPdf = event.target.closest("button[data-pdf]");
-
-  if (botaoPdf) {
-    selecionarLancamento(botaoPdf.dataset.pdf);
-    return;
-  }
-
-  if (event.target.classList.contains("input-ap")) return;
-
-  const linha = event.target.closest("tr[data-id]");
-
-  if (linha) {
-    selecionarLancamento(linha.dataset.id);
-  }
-});
     carregarLancamentos();
   </script>
 </body>
