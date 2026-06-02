@@ -713,36 +713,36 @@ lancamentos = (dados.data || []).map(montarLancamento);
     const bytes = base64ParaUint8Array(dados.base64);
   const texto = await extrairTextoPdfPorBytes(bytes);
 
-console.log("TEXTO EXTRAÍDO DO PDF:", texto);
-
-const agrupado = agruparLancamentosPorData(texto);
-    renderizarResumoPdf(agrupado, valorFatura);
-
-    mostrarStatus("Fatura analisada com sucesso.", "ok");
-
-  } catch (erro) {
-  console.error("ERRO PDF:", erro);
-
-  el.tabelaResumoPdf.innerHTML =
-    `<tr><td colspan="3" class="empty">${erro.message}</td></tr>`;
-
-  mostrarStatus(
-    "Erro PDF: " + erro.message,
-    "erro"
-  );
-}
-
-    function base64ParaUint8Array(base64) {
-  const binario = atob(base64);
-  const tamanho = binario.length;
-  const bytes = new Uint8Array(tamanho);
-
-  for (let i = 0; i < tamanho; i++) {
-    bytes[i] = binario.charCodeAt(i);
+  console.log("TEXTO EXTRAÍDO DO PDF:", texto);
+  
+  const agrupado = agruparLancamentosPorData(texto);
+      renderizarResumoPdf(agrupado, valorFatura);
+  
+      mostrarStatus("Fatura analisada com sucesso.", "ok");
+  
+    } catch (erro) {
+    console.error("ERRO PDF:", erro);
+  
+    el.tabelaResumoPdf.innerHTML =
+      `<tr><td colspan="3" class="empty">${erro.message}</td></tr>`;
+  
+    mostrarStatus(
+      "Erro PDF: " + erro.message,
+      "erro"
+    );
   }
-
-  return bytes;
-}
+  }
+      function base64ParaUint8Array(base64) {
+    const binario = atob(base64);
+    const tamanho = binario.length;
+    const bytes = new Uint8Array(tamanho);
+  
+    for (let i = 0; i < tamanho; i++) {
+      bytes[i] = binario.charCodeAt(i);
+    }
+  
+    return bytes;
+  }
 
 async function extrairTextoPdfPorBytes(bytes) {
   const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
