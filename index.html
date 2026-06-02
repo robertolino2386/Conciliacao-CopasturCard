@@ -721,9 +721,15 @@ const agrupado = agruparLancamentosPorData(texto);
     mostrarStatus("Fatura analisada com sucesso.", "ok");
 
   } catch (erro) {
-    el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Não foi possível identificar os lançamentos do PDF automaticamente.</td></tr>`;
-    mostrarStatus("Não foi possível ler o PDF automaticamente. Use o botão Ver Fatura para conferir o detalhe.", "erro");
-  }
+  console.error("ERRO PDF:", erro);
+
+  el.tabelaResumoPdf.innerHTML =
+    `<tr><td colspan="3" class="empty">${erro.message}</td></tr>`;
+
+  mostrarStatus(
+    "Erro PDF: " + erro.message,
+    "erro"
+  );
 }
 
     function base64ParaUint8Array(base64) {
