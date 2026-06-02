@@ -509,11 +509,18 @@ lancamentos = (dados.data || []).map(montarLancamento);
     }
 
     function atualizarAP(id, campo, valor) {
-      const item = lancamentos.find(l => String(l.id) === String(id));
-      if (item) item[campo] = somenteNumeros(valor);
-      const filtrado = lancamentosFiltrados.find(l => String(l.id) === String(id));
-      if (filtrado) filtrado[campo] = somenteNumeros(valor);
-    }
+  const valorLimpo = somenteNumeros(valor);
+
+  const item = lancamentos.find(l => String(l.id) === String(id));
+  if (item) item[campo] = valorLimpo;
+
+  const filtrado = lancamentosFiltrados.find(l => String(l.id) === String(id));
+  if (filtrado) filtrado[campo] = valorLimpo;
+
+  if (selecionado && String(selecionado.id) === String(id)) {
+    selecionado[campo] = valorLimpo;
+  }
+}
 
     async function salvarAPs() {
   if (CONFIG.appsScriptUrl.includes("COLE_AQUI")) {
