@@ -785,14 +785,17 @@ function agruparLancamentosPorData(texto) {
 
     if (!valores.length) continue;
 
-    const valor = valores[valores.length - 1];
+const valor = valores[valores.length - 1];
 
-    const atual = mapa.get(data) || {
-      data: data,
-      quantidade: 0,
-      total: 0
-    };
+if (valor === moedaParaNumero(selecionado.valor)) {
+  continue;
+}
 
+const atual = mapa.get(data) || {
+  data: data,
+  quantidade: 0,
+  total: 0
+};
     atual.quantidade += 1;
     atual.total += valor;
 
