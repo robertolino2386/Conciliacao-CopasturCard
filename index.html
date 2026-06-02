@@ -269,7 +269,31 @@
       font-size: 12px;
       font-weight: 800;
     }
+.copy-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
 
+.copy-cell span {
+  flex: 1;
+}
+
+.copy-btn {
+  border: 1px solid var(--cinza-borda);
+  background: var(--azul-suave);
+  color: var(--azul-escuro);
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.copy-btn:hover {
+  background: #DDF4FF;
+}
     @media (max-width: 850px) {
       .toolbar { grid-template-columns: 1fr; }
       .btn { width: 100%; }
@@ -499,9 +523,19 @@ lancamentos = (dados.data || []).map(montarLancamento);
           <td>${item.cartaoFinal || ""}</td>
           <td>${item.proprietario || ""}</td>
           <td class="valor">${formatarMoeda(moedaParaNumero(item.valor))}</td>
-          <td>${item.historico || ""}</td>
-          <td>${item.documentoDigitado || ""}</td>
-          <td><input class="input-ap" inputmode="numeric" data-campo="apCpa" data-id="${item.id}" value="${item.apCpa || ""}" /></td>
+          <td>
+  <div class="copy-cell">
+    <span>${item.historico || ""}</span>
+    <button class="copy-btn" type="button" data-copy="${encodeURIComponent(item.historico || "")}" title="Copiar histórico">📋</button>
+  </div>
+</td>
+<td>
+  <div class="copy-cell">
+    <span>${item.documentoDigitado || ""}</span>
+    <button class="copy-btn" type="button" data-copy="${encodeURIComponent(item.documentoDigitado || "")}" title="Copiar documento digitado">📋</button>
+  </div>
+</td>
+<td><input class="input-ap" inputmode="numeric" data-campo="apCpa" data-id="${item.id}" value="${item.apCpa || ""}" /></td>
           <td><input class="input-ap" inputmode="numeric" data-campo="apCre" data-id="${item.id}" value="${item.apCre || ""}" /></td>
           <td><button class="btn btn-light" type="button" data-pdf="${item.id}">Selecionar</button></td>
         </tr>
@@ -679,7 +713,15 @@ lancamentos = (dados.data || []).map(montarLancamento);
     });
 
     el.tabela.addEventListener("click", event => {
-      const botaoPdf = event.target.closest("button[data-pdf]");
+    el.tabela.addEventListener("click", event => {
+  const botaoCopiar = event.target.closest(".copy-btn");
+  if (botaoCopiar) {
+    const texto = decodeURIComponent(botaoCopiar.dataset.copy || "");
+    navigator.clipboard.writeText(texto);
+    mostrarStatus("Texto copiado.", "ok");
+    return;
+  }
+        const botaoPdf = event.target.closest("button[data-pdf]");
       if (botaoPdf) {
         selecionarLancamento(botaoPdf.dataset.pdf);
         return;
