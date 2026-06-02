@@ -516,37 +516,44 @@ lancamentos = (dados.data || []).map(montarLancamento);
     }
 
     async function salvarAPs() {
-      if (CONFIG.appsScriptUrl.includes("COLE_AQUI")) {
-        mostrarStatus("A URL do Apps Script ainda precisa ser informada.", "erro");
-        return;
-      }
+  if (CONFIG.appsScriptUrl.includes("COLE_AQUI")) {
+    mostrarStatus("A URL do Apps Script ainda precisa ser informada.", "erro");
+    return;
+  }
 
-      const alterados = lancamentos.map(item => ({
-        id: item.id,
-        apCpa: somenteNumeros(item.apCpa),
-        apCre: somenteNumeros(item.apCre)
-      }));
+  if (!selecionado) {
+    mostrarStatus("Selecione um lançamento antes de salvar.", "erro");
+    return;
+  }
 
-      try {
-        el.btnSalvar.disabled = true;
-        mostrarStatus("Salvando APs...", "info");
+  try {
+    el.btnSalvar.disabled = true;
+    mostrarStatus("Salvando APs...", "info");
 
-        const resposta = await fetch(CONFIG.appsScriptUrl, {
-          method: "POST",
-          body: JSON.stringify({ action: "salvarAPs", guia: CONFIG.nomeGuia, lancamentos: alterados })
-        });
+    const resposta = await fetch(CONFIG.appsScriptUrl, {
+      method: "POST",
+      body: JSON.stringify({
+        rowIndex: selecionado.id,
+        apCpa: somenteNumeros(selecionado.apCpa),
+        apCre: somenteNumeros(selecionado.apCre)
+      })
+    });
 
-        const dados = await resposta.json();
-        if (!dados.ok) throw new Error(dados.mensagem || "Não foi possível salvar.");
+    const dados = await resposta.json();
 
-        mostrarStatus("APs salvas com sucesso.", "ok");
-      } catch (erro) {
-        mostrarStatus(erro.message, "erro");
-      } finally {
-        el.btnSalvar.disabled = false;
-      }
+    if (!dados.success) {
+      throw new Error(dados.message || "Não foi possível salvar.");
     }
 
+    mostrarStatus("APs salvas com sucesso.", "ok");
+    await carregarLancamentos();
+
+  } catch (erro) {
+    mostrarStatus(erro.message || "Não foi possível salvar.", "erro");
+  } finally {
+    el.btnSalvar.disabled = false;
+  }
+}
     function selecionarLancamento(id) {
       selecionado = lancamentos.find(l => String(l.id) === String(id));
       renderizarTabela();
