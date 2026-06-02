@@ -710,8 +710,14 @@ lancamentos = (dados.data || []).map(montarLancamento);
 
     selecionado.pdfUrl = dados.url;
 
-    const bytes = base64ParaUint8Array(dados.base64);
-  const texto = await extrairTextoPdfPorBytes(bytes);
+  selecionado.pdfUrl = dados.url;
+
+const texto = dados.html || "";
+
+console.log("HTML/TEXTO DA FATURA:", texto);
+
+const agrupado = agruparLancamentosPorData(texto);
+renderizarResumoPdf(agrupado, valorFatura);
 
   console.log("TEXTO EXTRAÍDO DO PDF:", texto);
   
