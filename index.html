@@ -259,6 +259,12 @@
       white-space: nowrap;
     }
 
+    .valor-negativo {
+      color: var(--vermelho);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
     .input-ap {
       width: 112px;
       border: 1px solid var(--cinza-borda);
@@ -315,6 +321,140 @@
       height: 38px;
       font-size: 25px;
       line-height: 1;
+    }
+
+    .btn-data-plus {
+      width: 24px;
+      height: 24px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--azul-escuro);
+      color: var(--branco);
+      font-size: 17px;
+      line-height: 1;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 40, 92, 0.16);
+    }
+
+    .btn-data-plus:hover {
+      filter: brightness(1.1);
+      transform: scale(1.05);
+    }
+
+    .linha-detalhe-data {
+      display: none;
+      background: #F8FBFF;
+    }
+
+    .linha-detalhe-data.aberta {
+      display: table-row;
+    }
+
+    .detalhe-box {
+      border: 1px solid var(--cinza-borda);
+      background: var(--branco);
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: var(--sombra-leve);
+    }
+
+    .detalhe-titulo {
+      color: var(--azul-escuro);
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .detalhe-lista {
+      display: grid;
+      gap: 8px;
+    }
+
+    .detalhe-item {
+      display: grid;
+      grid-template-columns: 1fr 140px;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid #E6EDF6;
+      border-radius: 12px;
+      background: #FBFCFE;
+      font-size: 13px;
+    }
+
+    .detalhe-desc {
+      color: var(--texto);
+      overflow-wrap: anywhere;
+    }
+
+    .detalhe-valor {
+      text-align: right;
+      font-weight: 900;
+      color: var(--azul-escuro);
+      white-space: nowrap;
+    }
+
+    .sub-tabela-detalhe {
+      width: 100%;
+      min-width: 640px;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 12px;
+      background: var(--branco);
+      border: 1px solid #E6EDF6;
+    }
+
+    .sub-tabela-detalhe thead th {
+      position: static;
+      background: #EAF7FF;
+      color: var(--azul-escuro);
+      font-size: 12px;
+      padding: 10px 12px;
+      border-right: 1px solid #D8E1EC;
+    }
+
+    .sub-tabela-detalhe tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #E6EDF6;
+      font-size: 13px;
+      background: #FBFCFE;
+    }
+
+    .sub-tabela-detalhe tbody tr.linha-estorno td {
+      background: #FFF1F1;
+      color: var(--vermelho);
+    }
+
+    .badge-estorno {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 8px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #FFE1E1;
+      color: var(--vermelho);
+      font-size: 11px;
+      font-weight: 900;
+      vertical-align: middle;
+    }
+
+    .sub-tabela-detalhe tfoot td {
+      padding: 11px 12px;
+      background: #F0F8FF;
+      color: var(--azul-escuro);
+      font-weight: 900;
+      border-top: 1px solid #D8E1EC;
+      font-size: 13px;
+    }
+
+    .sub-tabela-detalhe .td-valor,
+    .sub-tabela-detalhe .th-valor {
+      text-align: right;
+      white-space: nowrap;
     }
 
     .check-finalizado {
@@ -565,13 +705,14 @@
           <table>
             <thead>
               <tr>
+                <th style="width:52px; text-align:center;">+</th>
                 <th>Data</th>
                 <th>Quantidade de lançamentos</th>
                 <th>Soma dos valores</th>
               </tr>
             </thead>
             <tbody id="tabelaResumoPdf">
-              <tr><td colspan="3" class="empty">O resumo por data aparecerá aqui após clicar em Ver Valores.</td></tr>
+              <tr><td colspan="4" class="empty">O resumo por data aparecerá aqui após clicar em Ver Valores.</td></tr>
             </tbody>
           </table>
         </div>
@@ -665,6 +806,25 @@
       });
     }
 
+    function formatarMoedaComSinal(valor) {
+      const numero = Number(valor || 0);
+      if (numero < 0) {
+        return "-" + formatarMoeda(Math.abs(numero));
+      }
+      return formatarMoeda(numero);
+    }
+
+    function ehEstorno(bloco) {
+      const texto = normalizar(bloco);
+      return (
+        texto.includes("estorno") ||
+        texto.includes("credito") ||
+        texto.includes("reversao") ||
+        texto.includes("cancelamento") ||
+        texto.includes("devolucao")
+      );
+    }
+
     function pegarCampo(obj, nomes) {
       const chaves = Object.keys(obj || {});
       for (const nome of nomes) {
@@ -706,6 +866,20 @@
       if (!meses[mes] || !ano) return "";
 
       return `${meses[mes]}${ano}`;
+    }
+
+    function limparDescricaoLancamento(bloco, data, valor) {
+      return String(bloco || "")
+        .replace(/<[^>]*>/g, " ")
+        .replace(/&nbsp;/gi, " ")
+        .replace(/&amp;/gi, "&")
+        .replace(/&quot;/gi, '"')
+        .replace(/&#039;/gi, "'")
+        .replace(new RegExp(data.replace(/\//g, "\\/"), "g"), "")
+        .replace(/R\$\s*\d{1,3}(?:\.\d{3})*,\d{2}/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 220) || "Lançamento da fatura";
     }
 
     function montarLancamento(item, index) {
@@ -903,7 +1077,7 @@
       el.metricSomaPdf.textContent = formatarMoeda(0);
       el.metricDiferenca.textContent = formatarMoeda(0);
       el.metricDiferenca.className = "";
-      el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Analisando a fatura selecionada...</td></tr>`;
+      el.tabelaResumoPdf.innerHTML = `<tr><td colspan="4" class="empty">Analisando a fatura selecionada...</td></tr>`;
     }
 
     async function analisarFatura(valorFatura) {
@@ -926,46 +1100,92 @@
         mostrarStatus("Fatura analisada com sucesso.", "ok");
       } catch (erro) {
         console.error("ERRO FATURA:", erro);
-        el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">${erro.message || "Não foi possível ler a fatura."}</td></tr>`;
+        el.tabelaResumoPdf.innerHTML = `<tr><td colspan="4" class="empty">${erro.message || "Não foi possível ler a fatura."}</td></tr>`;
         mostrarStatus("Erro fatura: " + (erro.message || "Falha na leitura."), "erro");
       }
     }
 
     function agruparLancamentosPorData(texto) {
       const mapa = new Map();
+      const totalFatura = moedaParaNumero(selecionado.valor);
 
       const textoLimpo = String(texto || "")
+        .replace(/&nbsp;/gi, " ")
+        .replace(/&amp;/gi, "&")
+        .replace(/<br\s*\/?>/gi, " ")
+        .replace(/<\/tr>/gi, " </tr> ")
+        .replace(/<\/td>/gi, " </td> ")
         .replace(/\s+/g, " ")
         .trim();
 
-      const regex = /(\d{2}\/\d{2}\/\d{4})(.*?)(?=\d{2}\/\d{2}\/\d{4}|$)/g;
+      const regexData = /(\d{2}\/\d{2}\/\d{4})(.*?)(?=\d{2}\/\d{2}\/\d{4}|$)/g;
       let match;
 
-      while ((match = regex.exec(textoLimpo)) !== null) {
+      while ((match = regexData.exec(textoLimpo)) !== null) {
         const data = match[1];
-        const bloco = match[2] || "";
+        const blocoOriginal = match[2] || "";
+        const blocoNormalizado = normalizar(blocoOriginal);
 
-        const valores = [...bloco.matchAll(/R\$\s*(\d{1,3}(?:\.\d{3})*,\d{2})/g)]
-          .map(v => moedaParaNumero(v[1]));
+        const isEstorno =
+          blocoNormalizado.includes("estorno") ||
+          blocoNormalizado.includes("reembolso") ||
+          blocoNormalizado.includes("reversao") ||
+          blocoNormalizado.includes("cancelamento") ||
+          blocoNormalizado.includes("devolucao");
 
-        if (!valores.length) continue;
+        /*
+          Captura valores com ou sem R$, com sinal negativo antes ou depois.
+          Exemplos aceitos:
+          R$ 227,11
+          -R$ 227,11
+          R$ -227,11
+          227,11-
+          (227,11)
+        */
+        const regexValores = /(\()?\s*(-)?\s*(?:R\$\s*)?(-)?\s*(\d{1,3}(?:\.\d{3})*,\d{2})\s*(-)?\s*(\))?/g;
+        const valoresEncontrados = [...blocoOriginal.matchAll(regexValores)];
 
-        const valor = valores[valores.length - 1];
+        if (!valoresEncontrados.length) continue;
 
-        if (valor === moedaParaNumero(selecionado.valor)) {
-          continue;
-        }
+        valoresEncontrados.forEach((valorMatch) => {
+          const valorTexto = valorMatch[4] || "";
+          let valor = moedaParaNumero(valorTexto);
 
-        const atual = mapa.get(data) || {
-          data: data,
-          quantidade: 0,
-          total: 0
-        };
+          if (!valor) return;
 
-        atual.quantidade += 1;
-        atual.total += valor;
+          const negativoPorSinal =
+            Boolean(valorMatch[1]) ||
+            Boolean(valorMatch[2]) ||
+            Boolean(valorMatch[3]) ||
+            Boolean(valorMatch[5]) ||
+            Boolean(valorMatch[6]);
 
-        mapa.set(data, atual);
+          if (Math.abs(valor - totalFatura) < 0.01) return;
+
+          if (isEstorno || negativoPorSinal) {
+            valor = Math.abs(valor) * -1;
+          }
+
+          const atual = mapa.get(data) || {
+            data: data,
+            quantidade: 0,
+            total: 0,
+            detalhes: []
+          };
+
+          const descricao = limparDescricaoLancamento(blocoOriginal, data, valorTexto);
+
+          atual.quantidade += 1;
+          atual.total += valor;
+          atual.detalhes.push({
+            data: data,
+            descricao: descricao,
+            valor: valor,
+            negativo: valor < 0
+          });
+
+          mapa.set(data, atual);
+        });
       }
 
       return [...mapa.values()].sort((a, b) => converterData(a.data) - converterData(b.data));
@@ -981,7 +1201,7 @@
 
     function renderizarResumoPdf(agrupado, valorFatura) {
       if (!agrupado.length) {
-        el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Nenhum lançamento com data e valor foi identificado na fatura.</td></tr>`;
+        el.tabelaResumoPdf.innerHTML = `<tr><td colspan="4" class="empty">Nenhum lançamento com data e valor foi identificado na fatura.</td></tr>`;
         return;
       }
 
@@ -989,17 +1209,62 @@
       const diferenca = valorFatura - soma;
 
       el.metricDatas.textContent = agrupado.length;
-      el.metricSomaPdf.textContent = formatarMoeda(soma);
-      el.metricDiferenca.textContent = formatarMoeda(diferenca);
+      el.metricSomaPdf.textContent = formatarMoedaComSinal(soma);
+      el.metricDiferenca.textContent = formatarMoedaComSinal(diferenca);
       el.metricDiferenca.className = Math.abs(diferenca) < 0.01 ? "ok" : "erro";
 
-      el.tabelaResumoPdf.innerHTML = agrupado.map(item => `
-        <tr>
-          <td>${item.data}</td>
-          <td>${item.quantidade}</td>
-          <td class="valor">${formatarMoeda(item.total)}</td>
-        </tr>
-      `).join("");
+      el.tabelaResumoPdf.innerHTML = agrupado.map((item, index) => {
+        const detalhes = (item.detalhes || []).map((detalhe, detalheIndex) => {
+          const classeValor = detalhe.valor < 0 ? "valor-negativo" : "td-valor";
+          const classeLinha = detalhe.valor < 0 ? "linha-estorno" : "";
+          const badge = detalhe.valor < 0 ? `<span class="badge-estorno">ESTORNO</span>` : "";
+
+          return `
+            <tr class="${classeLinha}">
+              <td>${detalheIndex + 1}</td>
+              <td class="${classeValor}">${formatarMoedaComSinal(detalhe.valor)}</td>
+              <td>${escaparHtml(detalhe.descricao)}${badge}</td>
+            </tr>
+          `;
+        }).join("");
+
+        const classeTotal = item.total < 0 ? "valor-negativo" : "td-valor";
+
+        return `
+          <tr>
+            <td style="text-align:center;"><button class="btn-data-plus" type="button" data-detalhe-data="${index}" title="Ver lançamentos da data">+</button></td>
+            <td>${item.data}</td>
+            <td>${item.quantidade}</td>
+            <td class="${item.total < 0 ? "valor-negativo" : "valor"}">${formatarMoedaComSinal(item.total)}</td>
+          </tr>
+          <tr class="linha-detalhe-data" data-detalhe-linha="${index}">
+            <td colspan="4">
+              <div class="detalhe-box">
+                <div class="detalhe-titulo">Lançamentos que compõem ${item.data}</div>
+                <table class="sub-tabela-detalhe">
+                  <thead>
+                    <tr>
+                      <th style="width:55px;">#</th>
+                      <th class="th-valor" style="width:150px;">Valor</th>
+                      <th>Lançamento</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${detalhes}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td>Total da data</td>
+                      <td class="${classeTotal}">${formatarMoedaComSinal(item.total)}</td>
+                      <td></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
     }
 
     el.filtro.addEventListener("input", aplicarFiltro);
@@ -1016,6 +1281,19 @@
 
     document.addEventListener("keydown", event => {
       if (event.key === "Escape") fecharModalResumo();
+    });
+
+    el.tabelaResumoPdf.addEventListener("click", event => {
+      const botaoDetalhe = event.target.closest("button[data-detalhe-data]");
+      if (!botaoDetalhe) return;
+
+      const indice = botaoDetalhe.dataset.detalheData;
+      const linhaDetalhe = el.tabelaResumoPdf.querySelector(`[data-detalhe-linha="${indice}"]`);
+      if (!linhaDetalhe) return;
+
+      const aberta = linhaDetalhe.classList.toggle("aberta");
+      botaoDetalhe.textContent = aberta ? "−" : "+";
+      botaoDetalhe.title = aberta ? "Ocultar lançamentos da data" : "Ver lançamentos da data";
     });
 
     el.tabela.addEventListener("input", event => {
@@ -1069,7 +1347,7 @@
         if (selecionado?.pdfUrl) {
           analisarFatura(moedaParaNumero(selecionado.valor));
         } else {
-          el.tabelaResumoPdf.innerHTML = `<tr><td colspan="3" class="empty">Este lançamento ainda não possui link de fatura vinculado.</td></tr>`;
+          el.tabelaResumoPdf.innerHTML = `<tr><td colspan="4" class="empty">Este lançamento ainda não possui link de fatura vinculado.</td></tr>`;
         }
         return;
       }
