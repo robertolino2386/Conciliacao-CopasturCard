@@ -1108,7 +1108,6 @@
     function agruparLancamentosPorData(texto) {
       const mapa = new Map();
       const totalFatura = moedaParaNumero(selecionado.valor);
-
       const textoLimpo = String(texto || "")
         .replace(/&nbsp;/gi, " ")
         .replace(/&amp;/gi, "&")
@@ -1187,6 +1186,10 @@
           mapa.set(data, atual);
         });
       }
+
+      mapa.forEach(item => {
+        item.detalhes.sort((a, b) => a.valor - b.valor);
+      });
 
       return [...mapa.values()].sort((a, b) => converterData(a.data) - converterData(b.data));
     }
