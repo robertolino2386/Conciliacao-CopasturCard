@@ -71,6 +71,302 @@
       white-space: nowrap;
     }
 
+    .nav-sistema {
+      width: min(1900px, calc(100% - 16px));
+      margin: 14px auto 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      border: 1px solid #BDEAFF;
+      background: var(--branco);
+      color: var(--azul-escuro);
+      border-radius: 12px;
+      padding: 11px 16px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: var(--sombra-leve);
+      transition: 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: var(--azul-suave);
+      transform: translateY(-1px);
+    }
+
+    .nav-btn.ativo {
+      background: var(--azul-escuro);
+      color: var(--branco);
+      border-color: var(--azul-escuro);
+    }
+
+    .page-hidden { display: none; }
+
+    .dashboard-page {
+      display: grid;
+      gap: 18px;
+    }
+
+    .dashboard-toolbar {
+      display: grid;
+      grid-template-columns: minmax(220px, 280px) minmax(220px, 1fr);
+      gap: 14px;
+      align-items: center;
+      padding: 18px;
+      border-bottom: 1px solid var(--cinza-borda);
+      background: #FBFCFE;
+    }
+
+    .dashboard-title h2 {
+      margin: 0;
+      color: var(--azul-escuro);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .dashboard-title p {
+      margin: 6px 0 0;
+      color: var(--cinza-texto);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .dash-kpis {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(130px, 1fr));
+      gap: 12px;
+      padding: 18px;
+    }
+
+    .dash-card {
+      border: 1px solid var(--cinza-borda);
+      border-radius: 16px;
+      padding: 14px;
+      background: var(--branco);
+      box-shadow: var(--sombra-leve);
+    }
+
+    .dash-card small {
+      display: block;
+      color: var(--cinza-texto);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      letter-spacing: 0.2px;
+    }
+
+    .dash-card strong {
+      display: block;
+      color: var(--azul-escuro);
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      padding: 0 18px 18px;
+    }
+
+    .dash-grid.full {
+      grid-template-columns: 1fr;
+    }
+
+    .dash-box {
+      border: 1px solid var(--cinza-borda);
+      border-radius: 18px;
+      background: var(--branco);
+      box-shadow: var(--sombra-leve);
+      overflow: hidden;
+    }
+
+    .dash-box-head {
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--cinza-borda);
+      background: #FBFCFE;
+    }
+
+    .dash-box-head h3 {
+      margin: 0;
+      color: var(--azul-escuro);
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .dash-box-head p {
+      margin: 5px 0 0;
+      color: var(--cinza-texto);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .dash-table-wrap {
+      overflow: auto;
+      max-height: 520px;
+    }
+
+    .dash-table {
+      width: 100%;
+      min-width: 880px;
+      border-collapse: collapse;
+    }
+
+    .dash-table th {
+      background: var(--azul-escuro);
+      color: var(--branco);
+      font-size: 11px;
+      padding: 10px;
+      text-align: left;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .dash-table td {
+      padding: 10px;
+      border-bottom: 1px solid #E6EDF6;
+      font-size: 12px;
+      vertical-align: middle;
+    }
+
+    .chart-area {
+      padding: 18px;
+    }
+
+    .column-chart {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      align-items: end;
+      min-height: 270px;
+      padding: 18px 8px 8px;
+      border-bottom: 1px solid #E6EDF6;
+    }
+
+    .column-item {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 10px;
+      height: 250px;
+      min-width: 0;
+    }
+
+    .column-bar-wrap {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      height: 200px;
+    }
+
+    .column-bar {
+      width: min(44px, 78%);
+      min-height: 6px;
+      border-radius: 12px 12px 4px 4px;
+      background: linear-gradient(180deg, var(--azul-claro), var(--azul-escuro));
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      color: var(--branco);
+      font-size: 11px;
+      font-weight: 900;
+      padding-top: 7px;
+      box-shadow: 0 8px 16px rgba(0, 40, 92, 0.18);
+      transition: height 0.35s ease;
+    }
+
+    .column-label {
+      text-align: center;
+      color: var(--azul-escuro);
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
+    .bar-percent-list {
+      display: grid;
+      gap: 13px;
+      padding: 18px;
+    }
+
+    .percent-row {
+      display: grid;
+      grid-template-columns: 150px 1fr 72px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .percent-label {
+      color: var(--azul-escuro);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .percent-track {
+      height: 18px;
+      border-radius: 999px;
+      background: #E7EEF7;
+      overflow: hidden;
+    }
+
+    .percent-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--azul-claro), var(--azul-escuro));
+      transition: width 0.35s ease;
+    }
+
+    .percent-value {
+      text-align: right;
+      color: var(--azul-escuro);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 18px 18px;
+    }
+
+    .legend-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid #E6EDF6;
+      background: #FBFCFE;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--azul-escuro);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--azul-escuro);
+    }
+
+    .dash-empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--cinza-texto);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
     main {
       width: min(1900px, calc(100% - 16px));
       margin: 18px auto 40px;
@@ -795,6 +1091,12 @@
     }
 
     @media (max-width: 1180px) {
+      .dash-kpis { grid-template-columns: repeat(2, 1fr); }
+      .dash-grid { grid-template-columns: 1fr; }
+      .dashboard-toolbar { grid-template-columns: 1fr; }
+      .percent-row { grid-template-columns: 120px 1fr 64px; }
+      .column-chart { grid-template-columns: repeat(3, 1fr); min-height: auto; }
+
       .top-panel { grid-template-columns: 1fr; }
       .metrics-row { grid-template-columns: repeat(3, 1fr); }
       .dashboard-extra { grid-template-columns: 1fr; }
@@ -832,7 +1134,13 @@
     </div>
   </header>
 
+  <nav class="nav-sistema">
+    <button class="nav-btn ativo" id="btnTelaConciliacao" type="button">📋 Conciliação</button>
+    <button class="nav-btn" id="btnTelaDashboard" type="button">📊 Dashboard</button>
+  </nav>
+
   <main>
+    <div id="pageConciliacao">
     <section class="card">
       <div class="top-panel">
         <div class="toolbar">
@@ -972,6 +1280,80 @@
         </div>
       </div>
     </section>
+    </div>
+
+    <div id="pageDashboard" class="dashboard-page page-hidden">
+      <section class="card">
+        <div class="dashboard-toolbar">
+          <select id="dashboardPeriodo" class="select-status">
+            <option value="todos">Todos períodos</option>
+          </select>
+          <div class="dashboard-title">
+            <h2>Dashboard de Fechamentos</h2>
+            <p>Análise dos fechamentos por período, status, quantidade, valores e percentual de participação.</p>
+          </div>
+        </div>
+
+        <div class="dash-kpis">
+          <div class="dash-card"><small>Total de faturas</small><strong id="dashTotal">0</strong></div>
+          <div class="dash-card"><small>Finalizadas</small><strong id="dashFinalizadas">0</strong></div>
+          <div class="dash-card"><small>Pendentes</small><strong id="dashPendentes">0</strong></div>
+          <div class="dash-card"><small>% fechamento</small><strong id="dashPercentual">0%</strong></div>
+          <div class="dash-card"><small>Valor pendente</small><strong id="dashValorPendente">R$ 0,00</strong></div>
+        </div>
+
+        <div class="dash-grid">
+          <div class="dash-box">
+            <div class="dash-box-head">
+              <h3>Gráfico de colunas por status</h3>
+              <p>Quantidade de faturas em cada status no período selecionado.</p>
+            </div>
+            <div class="chart-area">
+              <div class="column-chart" id="dashColumnChart"></div>
+            </div>
+            <div class="chart-legend" id="dashColumnLegend"></div>
+          </div>
+
+          <div class="dash-box">
+            <div class="dash-box-head">
+              <h3>% de cada status</h3>
+              <p>Gráfico de barras com a participação percentual de cada status.</p>
+            </div>
+            <div class="bar-percent-list" id="dashPercentBars"></div>
+          </div>
+        </div>
+
+        <div class="dash-grid full">
+          <div class="dash-box">
+            <div class="dash-box-head">
+              <h3>Fechamentos por período e status</h3>
+              <p>Resumo consolidado da operação por mês/período.</p>
+            </div>
+            <div class="dash-table-wrap">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Período</th>
+                    <th>Total</th>
+                    <th>Conciliado</th>
+                    <th>Finalizado sem AP</th>
+                    <th>Divergente</th>
+                    <th>Aguardando retorno</th>
+                    <th>Não conciliável</th>
+                    <th>Pendente</th>
+                    <th>% finalizado</th>
+                    <th>Valor total</th>
+                  </tr>
+                </thead>
+                <tbody id="dashTabelaPeriodo">
+                  <tr><td colspan="10" class="dash-empty">Carregando análise...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
 
   <div class="modal-overlay" id="modalResumo" aria-hidden="true">
@@ -1068,7 +1450,21 @@
       infoPaginacao: document.getElementById("infoPaginacao"),
       paginaAtualTexto: document.getElementById("paginaAtualTexto"),
       btnPaginaAnterior: document.getElementById("btnPaginaAnterior"),
-      btnProximaPagina: document.getElementById("btnProximaPagina")
+      btnProximaPagina: document.getElementById("btnProximaPagina"),
+      btnTelaConciliacao: document.getElementById("btnTelaConciliacao"),
+      btnTelaDashboard: document.getElementById("btnTelaDashboard"),
+      pageConciliacao: document.getElementById("pageConciliacao"),
+      pageDashboard: document.getElementById("pageDashboard"),
+      dashboardPeriodo: document.getElementById("dashboardPeriodo"),
+      dashTotal: document.getElementById("dashTotal"),
+      dashFinalizadas: document.getElementById("dashFinalizadas"),
+      dashPendentes: document.getElementById("dashPendentes"),
+      dashPercentual: document.getElementById("dashPercentual"),
+      dashValorPendente: document.getElementById("dashValorPendente"),
+      dashColumnChart: document.getElementById("dashColumnChart"),
+      dashColumnLegend: document.getElementById("dashColumnLegend"),
+      dashPercentBars: document.getElementById("dashPercentBars"),
+      dashTabelaPeriodo: document.getElementById("dashTabelaPeriodo")
     };
 
     function mostrarStatus(texto, tipo = "info") {
@@ -1275,8 +1671,10 @@
 
         lancamentos = (dados.data || []).map(montarLancamento);
         atualizarFiltroPeriodo();
+        atualizarDashboardPeriodos();
         atualizarIndicadores();
         aplicarFiltro();
+        atualizarDashboard();
         mostrarStatus("Lançamentos atualizados com sucesso.", "ok");
       } catch (erro) {
         el.tabela.innerHTML = `<tr><td colspan="12" class="empty">Não foi possível carregar os lançamentos.</td></tr>`;
@@ -1736,6 +2134,197 @@
       }).join("");
     }
 
+
+    const STATUS_DASHBOARD = [
+      { nome: "Conciliado", key: "conciliado", classe: "conciliado", cor: "#14A44D" },
+      { nome: "Finalizado sem AP", key: "semAp", classe: "sem-ap", cor: "#00285C" },
+      { nome: "Divergente", key: "divergente", classe: "divergente", cor: "#DC3545" },
+      { nome: "Aguardando retorno", key: "aguardando", classe: "aguardando", cor: "#6D28D9" },
+      { nome: "Não conciliável", key: "naoConciliavel", classe: "nao-conciliavel", cor: "#475467" },
+      { nome: "Pendente", key: "pendente", classe: "pendente", cor: "#F59E0B" }
+    ];
+
+    function statusKeyDashboard(status) {
+      const s = normalizarStatus(status);
+      const item = STATUS_DASHBOARD.find(st => st.nome === s);
+      return item ? item.key : "pendente";
+    }
+
+    function converterPeriodoParaData(periodo) {
+      const [mes, ano] = String(periodo || "").split("/").map(Number);
+      return new Date(ano || 1900, (mes || 1) - 1, 1).getTime();
+    }
+
+    function atualizarDashboardPeriodos() {
+      const atual = el.dashboardPeriodo.value || "todos";
+      const periodos = [...new Set(lancamentos.map(item => item.periodo).filter(Boolean))]
+        .sort((a, b) => converterPeriodoParaData(a) - converterPeriodoParaData(b));
+
+      el.dashboardPeriodo.innerHTML = `
+        <option value="todos">Todos períodos</option>
+        ${periodos.map(periodo => `<option value="${escaparHtml(periodo)}">${escaparHtml(periodo)}</option>`).join("")}
+      `;
+
+      el.dashboardPeriodo.value = periodos.includes(atual) ? atual : "todos";
+    }
+
+    function baseDashboardFiltrada() {
+      const periodoFiltro = el.dashboardPeriodo.value || "todos";
+      return periodoFiltro === "todos"
+        ? lancamentos
+        : lancamentos.filter(item => String(item.periodo) === String(periodoFiltro));
+    }
+
+    function contarStatus(base) {
+      const counts = {};
+      STATUS_DASHBOARD.forEach(status => counts[status.key] = 0);
+
+      base.forEach(item => {
+        const key = statusKeyDashboard(item.statusConciliacao);
+        counts[key] = (counts[key] || 0) + 1;
+      });
+
+      return counts;
+    }
+
+    function montarResumoDashboard() {
+      const resumo = new Map();
+
+      lancamentos.forEach(item => {
+        const periodo = item.periodo || "Sem período";
+        const status = normalizarStatus(item.statusConciliacao);
+        const valor = moedaParaNumero(item.valor);
+
+        if (!resumo.has(periodo)) {
+          const linha = {
+            periodo,
+            total: 0,
+            valorTotal: 0,
+            valorFinalizado: 0
+          };
+          STATUS_DASHBOARD.forEach(st => linha[st.key] = 0);
+          resumo.set(periodo, linha);
+        }
+
+        const linha = resumo.get(periodo);
+        linha.total += 1;
+        linha.valorTotal += valor;
+        linha[statusKeyDashboard(status)] += 1;
+
+        if (statusFinalizado(status)) {
+          linha.valorFinalizado += valor;
+        }
+      });
+
+      return [...resumo.values()].sort((a, b) => converterPeriodoParaData(a.periodo) - converterPeriodoParaData(b.periodo));
+    }
+
+    function atualizarDashboard() {
+      const base = baseDashboardFiltrada();
+      const total = base.length;
+      const finalizadas = base.filter(item => statusFinalizado(item.statusConciliacao) || item.finalizado).length;
+      const pendentes = total - finalizadas;
+      const percentualFinalizado = total ? Math.round((finalizadas / total) * 100) : 0;
+
+      const valorTotal = base.reduce((acc, item) => acc + moedaParaNumero(item.valor), 0);
+      const valorFinalizado = base
+        .filter(item => statusFinalizado(item.statusConciliacao) || item.finalizado)
+        .reduce((acc, item) => acc + moedaParaNumero(item.valor), 0);
+      const valorPendente = valorTotal - valorFinalizado;
+
+      el.dashTotal.textContent = total;
+      el.dashFinalizadas.textContent = finalizadas;
+      el.dashPendentes.textContent = pendentes;
+      el.dashPercentual.textContent = `${percentualFinalizado}%`;
+      el.dashValorPendente.textContent = formatarMoeda(valorPendente);
+
+      const counts = contarStatus(base);
+      const maior = Math.max(1, ...STATUS_DASHBOARD.map(st => counts[st.key] || 0));
+
+      el.dashColumnChart.innerHTML = STATUS_DASHBOARD.map(status => {
+        const qtd = counts[status.key] || 0;
+        const altura = total ? Math.max(6, Math.round((qtd / maior) * 190)) : 6;
+        return `
+          <div class="column-item">
+            <div class="column-bar-wrap">
+              <div class="column-bar" style="height:${altura}px; background:linear-gradient(180deg, ${status.cor}, var(--azul-escuro));">
+                ${qtd}
+              </div>
+            </div>
+            <div class="column-label">${status.nome}</div>
+          </div>
+        `;
+      }).join("");
+
+      el.dashColumnLegend.innerHTML = STATUS_DASHBOARD.map(status => `
+        <span class="legend-chip">
+          <span class="legend-dot" style="background:${status.cor};"></span>
+          ${status.nome}
+        </span>
+      `).join("");
+
+      el.dashPercentBars.innerHTML = STATUS_DASHBOARD.map(status => {
+        const qtd = counts[status.key] || 0;
+        const pct = total ? Math.round((qtd / total) * 100) : 0;
+        return `
+          <div class="percent-row">
+            <div class="percent-label">${status.nome}</div>
+            <div class="percent-track">
+              <div class="percent-fill" style="width:${pct}%; background:linear-gradient(90deg, ${status.cor}, var(--azul-escuro));"></div>
+            </div>
+            <div class="percent-value">${pct}%</div>
+          </div>
+        `;
+      }).join("");
+
+      const periodoFiltro = el.dashboardPeriodo.value || "todos";
+      const resumo = montarResumoDashboard();
+      const resumoFiltrado = periodoFiltro === "todos"
+        ? resumo
+        : resumo.filter(item => String(item.periodo) === String(periodoFiltro));
+
+      if (!resumoFiltrado.length) {
+        el.dashTabelaPeriodo.innerHTML = `<tr><td colspan="10" class="dash-empty">Nenhum dado encontrado.</td></tr>`;
+      } else {
+        el.dashTabelaPeriodo.innerHTML = resumoFiltrado.map(item => {
+          const finalizadoLinha = item.conciliado + item.semAp + item.naoConciliavel;
+          const pctLinha = item.total ? Math.round((finalizadoLinha / item.total) * 100) : 0;
+
+          return `
+            <tr>
+              <td><strong>${escaparHtml(item.periodo)}</strong></td>
+              <td>${item.total}</td>
+              <td>${item.conciliado}</td>
+              <td>${item.semAp}</td>
+              <td>${item.divergente}</td>
+              <td>${item.aguardando}</td>
+              <td>${item.naoConciliavel}</td>
+              <td>${item.pendente}</td>
+              <td>${pctLinha}%</td>
+              <td class="valor">${formatarMoeda(item.valorTotal)}</td>
+            </tr>
+          `;
+        }).join("");
+      }
+    }
+
+    function mostrarTela(nomeTela) {
+      const dashboard = nomeTela === "dashboard";
+      el.pageConciliacao.classList.toggle("page-hidden", dashboard);
+      el.pageDashboard.classList.toggle("page-hidden", !dashboard);
+      el.btnTelaConciliacao.classList.toggle("ativo", !dashboard);
+      el.btnTelaDashboard.classList.toggle("ativo", dashboard);
+
+      if (dashboard) {
+        atualizarDashboardPeriodos();
+        atualizarDashboard();
+      }
+    }
+
+    el.btnTelaConciliacao.addEventListener("click", () => mostrarTela("conciliacao"));
+    el.btnTelaDashboard.addEventListener("click", () => mostrarTela("dashboard"));
+    el.dashboardPeriodo.addEventListener("change", atualizarDashboard);
+
     el.filtro.addEventListener("input", aplicarFiltro);
     el.filtroPeriodo.addEventListener("change", aplicarFiltro);
     el.filtroStatus.addEventListener("change", aplicarFiltro);
@@ -1808,6 +2397,7 @@
         salvarAPs().then(() => {
           atualizarIndicadores();
           aplicarFiltro();
+          atualizarDashboard();
         });
       }
     });
