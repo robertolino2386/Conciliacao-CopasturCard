@@ -42,7 +42,7 @@
     }
 
     .header-content {
-      width: min(1560px, 100%);
+      width: min(1900px, 100%);
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
@@ -72,8 +72,8 @@
     }
 
     main {
-      width: min(1560px, calc(100% - 34px));
-      margin: 22px auto 44px;
+      width: min(1900px, calc(100% - 16px));
+      margin: 18px auto 40px;
     }
 
     .card {
@@ -96,7 +96,7 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: minmax(360px, 1fr) 180px 130px 135px;
+      grid-template-columns: minmax(250px, 1fr) 135px 170px 120px 130px;
       gap: 12px;
       align-items: center;
     }
@@ -129,7 +129,7 @@
       border: 0;
       outline: none;
       background: transparent;
-      font-size: 15px;
+      font-size: 13px;
       color: var(--texto);
     }
 
@@ -332,7 +332,7 @@
 
     .scroll-top-inner {
       height: 14px;
-      min-width: 1720px;
+      min-width: 1490px;
     }
 
     .table-wrap { width: 100%; overflow: auto; }
@@ -380,7 +380,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1720px;
+      min-width: 1490px;
     }
 
     thead th {
@@ -390,14 +390,14 @@
       background: var(--azul-escuro);
       color: var(--branco);
       text-align: left;
-      font-size: 12px;
+      font-size: 11px;
       line-height: 1.1;
-      padding: 13px 10px;
+      padding: 11px 8px;
       border-right: 1px solid rgba(255,255,255,0.2);
     }
 
     tbody td {
-      padding: 10px 8px;
+      padding: 9px 7px;
       border-bottom: 1px solid var(--cinza-borda);
       font-size: 12px;
       vertical-align: middle;
@@ -409,15 +409,15 @@
 
     .col-periodo { width: 78px; }
     .col-cartao { width: 74px; }
-    .col-prop { width: 260px; }
+    .col-prop { width: 220px; }
     .col-valor { width: 120px; }
-    .col-hist { width: 360px; }
-    .col-doc { width: 138px; }
-    .col-ap { width: 130px; }
-    .col-action { width: 105px; text-align: center; }
+    .col-hist { width: 285px; }
+    .col-doc { width: 118px; }
+    .col-ap { width: 112px; }
+    .col-action { width: 88px; text-align: center; }
     .col-finalizado { width: 90px; text-align: center; }
-    .col-obs { width: 250px; }
-    .col-status { width: 190px; text-align: center; }
+    .col-obs { width: 190px; }
+    .col-status { width: 165px; text-align: center; }
 
     .valor {
       font-weight: 900;
@@ -432,10 +432,10 @@
     }
 
     .input-ap {
-      width: 112px;
+      width: 96px;
       border: 1px solid var(--cinza-borda);
       border-radius: 10px;
-      padding: 10px 11px;
+      padding: 9px 9px;
       font-size: 12px;
       outline: none;
       background: var(--branco);
@@ -472,9 +472,9 @@
       background: var(--azul-escuro);
       color: var(--branco);
       border: 0;
-      border-radius: 11px;
-      padding: 10px 13px;
-      font-size: 13px;
+      border-radius: 10px;
+      padding: 8px 9px;
+      font-size: 11px;
       font-weight: 900;
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(0, 40, 92, 0.16);
@@ -483,9 +483,9 @@
     .btn-table:hover { filter: brightness(1.08); }
 
     .btn-plus {
-      width: 42px;
-      height: 38px;
-      font-size: 25px;
+      width: 34px;
+      height: 32px;
+      font-size: 21px;
       line-height: 1;
     }
 
@@ -624,11 +624,11 @@
     }
 
     .obs-input {
-      width: 220px;
-      min-height: 42px;
+      width: 175px;
+      min-height: 38px;
       border: 1px solid var(--cinza-borda);
       border-radius: 10px;
-      padding: 9px 10px;
+      padding: 8px 9px;
       font-size: 12px;
       outline: none;
       resize: vertical;
@@ -642,11 +642,11 @@
     }
 
     .status-conciliacao {
-      width: 170px;
+      width: 150px;
       border: 1px solid var(--cinza-borda);
       border-radius: 10px;
-      padding: 10px 9px;
-      font-size: 12px;
+      padding: 9px 8px;
+      font-size: 11px;
       font-weight: 800;
       color: var(--azul-escuro);
       background: var(--branco);
@@ -798,14 +798,14 @@
       .top-panel { grid-template-columns: 1fr; }
       .metrics-row { grid-template-columns: repeat(3, 1fr); }
       .dashboard-extra { grid-template-columns: 1fr; }
-      .toolbar { grid-template-columns: 1fr 180px 130px 135px; }
+      .toolbar { grid-template-columns: 1fr 145px 180px 130px 135px; }
     }
 
     @media (max-width: 850px) {
       header { padding: 22px 16px; }
       .header-content { align-items: flex-start; flex-direction: column; }
       .logo-copastur { font-size: 36px; }
-      main { width: calc(100% - 18px); margin-top: 14px; }
+      main { width: calc(100% - 10px); margin-top: 12px; }
       .toolbar { grid-template-columns: 1fr; }
       .btn-save-small { width: 100%; min-width: 100%; }
       .metrics-row { grid-template-columns: 1fr; }
@@ -838,8 +838,12 @@
         <div class="toolbar">
           <label class="search-box" for="filtro">
             <span>🔎</span>
-            <input id="filtro" type="text" placeholder="Pesquisar por cliente, mês, ano ou final do cartão" />
+            <input id="filtro" type="text" placeholder="Pesquisar cliente, cartão, valor ou observação" />
           </label>
+
+          <select id="filtroPeriodo" class="select-status">
+            <option value="todos">Todos períodos</option>
+          </select>
 
           <select id="filtroStatus" class="select-status">
             <option value="Pendente">Status: Pendente</option>
@@ -1031,6 +1035,7 @@
 
     const el = {
       filtro: document.getElementById("filtro"),
+      filtroPeriodo: document.getElementById("filtroPeriodo"),
       filtroStatus: document.getElementById("filtroStatus"),
       tabela: document.getElementById("tabelaLancamentos"),
       status: document.getElementById("status"),
@@ -1269,6 +1274,7 @@
         if (!dados.success) throw new Error(dados.message || "Não foi possível carregar os lançamentos.");
 
         lancamentos = (dados.data || []).map(montarLancamento);
+        atualizarFiltroPeriodo();
         atualizarIndicadores();
         aplicarFiltro();
         mostrarStatus("Lançamentos atualizados com sucesso.", "ok");
@@ -1312,8 +1318,30 @@
       el.valorPendenteDashboard.textContent = formatarMoeda(valorPendente);
     }
 
+    function atualizarFiltroPeriodo() {
+      const periodoAtual = el.filtroPeriodo.value || "todos";
+      const periodos = [...new Set(lancamentos.map(item => item.periodo).filter(Boolean))]
+        .sort((a, b) => {
+          const [ma, aa] = String(a).split("/").map(Number);
+          const [mb, ab] = String(b).split("/").map(Number);
+          return new Date(aa || 1900, (ma || 1) - 1, 1) - new Date(ab || 1900, (mb || 1) - 1, 1);
+        });
+
+      el.filtroPeriodo.innerHTML = `
+        <option value="todos">Todos períodos</option>
+        ${periodos.map(periodo => `<option value="${escaparHtml(periodo)}">${escaparHtml(periodo)}</option>`).join("")}
+      `;
+
+      if (periodos.includes(periodoAtual)) {
+        el.filtroPeriodo.value = periodoAtual;
+      } else {
+        el.filtroPeriodo.value = "todos";
+      }
+    }
+
     function aplicarFiltro() {
       const termo = normalizar(el.filtro.value);
+      const periodoFiltro = el.filtroPeriodo.value;
       const status = el.filtroStatus.value;
 
       lancamentosFiltrados = lancamentos.filter(item => {
@@ -1329,6 +1357,7 @@
         ].join(" "));
 
         const passaTexto = base.includes(termo);
+        const passaPeriodo = periodoFiltro === "todos" || String(item.periodo) === String(periodoFiltro);
         const itemFinalizado = statusFinalizado(item.statusConciliacao) || item.finalizado;
 
         const passaStatus =
@@ -1337,7 +1366,7 @@
           (status === "finalizados" && itemFinalizado) ||
           normalizarStatus(status) === normalizarStatus(item.statusConciliacao);
 
-        return passaTexto && passaStatus;
+        return passaTexto && passaPeriodo && passaStatus;
       });
 
       paginaAtual = 1;
@@ -1708,6 +1737,7 @@
     }
 
     el.filtro.addEventListener("input", aplicarFiltro);
+    el.filtroPeriodo.addEventListener("change", aplicarFiltro);
     el.filtroStatus.addEventListener("change", aplicarFiltro);
     el.btnAtualizar.addEventListener("click", carregarLancamentos);
     el.btnSalvar.addEventListener("click", salvarAPs);
