@@ -1156,11 +1156,12 @@
           <select id="filtroStatus" class="select-status">
             <option value="Pendente">Status: Pendente</option>
             <option value="Conciliado">Status: Conciliado</option>
+            <option value="Finalizado sem AP">Status: Finalizado sem AP</option>
             <option value="Divergente">Status: Divergente</option>
-            <option value="Divergente">Status: Finalizado Sem AP</option>
             <option value="Aguardando retorno">Status: Aguardando retorno</option>
+            <option value="Não conciliável">Status: Não conciliável</option>
             <option value="todos">Todos</option>
-            </select>
+          </select>
 
           <button class="btn btn-light" id="btnAtualizar" type="button">↻ Atualizar</button>
           <button class="btn btn-primary btn-save-small" id="btnSalvar" type="button">▣ Salvar APs</button>
@@ -1550,8 +1551,50 @@
     ];
 
     function normalizarStatus(valor) {
-      const status = String(valor || "").trim();
-      return STATUS_CONCILIACAO.includes(status) ? status : "Pendente";
+      const statusOriginal = String(valor || "").trim();
+      const statusNormalizado = normalizar(statusOriginal);
+
+      if (!statusOriginal) return "Pendente";
+
+      if (
+        statusNormalizado === "finalizado sem ap" ||
+        statusNormalizado === "finalizado sem a.p" ||
+        statusNormalizado === "sem ap" ||
+        statusNormalizado === "sem a.p" ||
+        statusNormalizado === "sem-ap"
+      ) {
+        return "Finalizado sem AP";
+      }
+
+      if (statusNormalizado === "conciliado" || statusNormalizado === "conciliada") {
+        return "Conciliado";
+      }
+
+      if (statusNormalizado === "divergente" || statusNormalizado === "divergencia") {
+        return "Divergente";
+      }
+
+      if (
+        statusNormalizado === "aguardando retorno" ||
+        statusNormalizado === "aguardando" ||
+        statusNormalizado === "em retorno"
+      ) {
+        return "Aguardando retorno";
+      }
+
+      if (
+        statusNormalizado === "nao conciliavel" ||
+        statusNormalizado === "nao-conciliavel"
+      ) {
+        return "Não conciliável";
+      }
+
+      if (statusNormalizado === "pendente") {
+        return "Pendente";
+      }
+
+      const statusEncontrado = STATUS_CONCILIACAO.find(status => normalizar(status) === statusNormalizado);
+      return statusEncontrado || "Pendente";
     }
 
     function statusFinalizado(status) {
@@ -1759,11 +1802,14 @@
         const passaPeriodo = periodoFiltro === "todos" || String(item.periodo) === String(periodoFiltro);
         const itemFinalizado = statusFinalizado(item.statusConciliacao) || item.finalizado;
 
+        const statusFiltroNormalizado = normalizarStatus(status);
+        const statusItemNormalizado = normalizarStatus(item.statusConciliacao);
+
         const passaStatus =
           status === "todos" ||
           (status === "pendentes" && !itemFinalizado) ||
           (status === "finalizados" && itemFinalizado) ||
-          normalizarStatus(status) === normalizarStatus(item.statusConciliacao);
+          statusFiltroNormalizado === statusItemNormalizado;
 
         return passaTexto && passaPeriodo && passaStatus;
       });
