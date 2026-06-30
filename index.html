@@ -385,7 +385,7 @@
       display: grid;
       grid-template-columns: 1fr;
       gap: 14px;
-      padding: 18px;
+      padding: 14px 18px;
       align-items: stretch;
       border-bottom: 1px solid var(--cinza-borda);
     }
@@ -1156,73 +1156,17 @@
           <select id="filtroStatus" class="select-status">
             <option value="Pendente">Status: Pendente</option>
             <option value="Conciliado">Status: Conciliado</option>
-            <option value="Finalizado sem AP">Status: Finalizado sem AP</option>
             <option value="Divergente">Status: Divergente</option>
+            <option value="Divergente">Status: Finalizado Sem AP</option>
             <option value="Aguardando retorno">Status: Aguardando retorno</option>
-            <option value="Não conciliável">Status: Não conciliável</option>
             <option value="todos">Todos</option>
-          </select>
+            </select>
 
           <button class="btn btn-light" id="btnAtualizar" type="button">↻ Atualizar</button>
           <button class="btn btn-primary btn-save-small" id="btnSalvar" type="button">▣ Salvar APs</button>
         </div>
-
-        <div class="metrics-row">
-          <div class="kpi-card total">
-            <div>
-              <div class="kpi-label">Total</div>
-              <div class="kpi-value" id="kpiTotal">0</div>
-            </div>
-            <div class="kpi-icon">📄</div>
-          </div>
-          <div class="kpi-card done">
-            <div>
-              <div class="kpi-label">Conciliadas</div>
-              <div class="kpi-value" id="kpiConciliadas">0</div>
-            </div>
-            <div class="kpi-icon">✓</div>
-          </div>
-          <div class="kpi-card sem-ap">
-            <div>
-              <div class="kpi-label">Sem AP</div>
-              <div class="kpi-value" id="kpiSemAp">0</div>
-            </div>
-            <div class="kpi-icon">ℹ</div>
-          </div>
-          <div class="kpi-card divergente">
-            <div>
-              <div class="kpi-label">Divergentes</div>
-              <div class="kpi-value" id="kpiDivergentes">0</div>
-            </div>
-            <div class="kpi-icon">!</div>
-          </div>
-          <div class="kpi-card aguardando">
-            <div>
-              <div class="kpi-label">Aguardando</div>
-              <div class="kpi-value" id="kpiAguardando">0</div>
-            </div>
-            <div class="kpi-icon">⏳</div>
-          </div>
-          <div class="kpi-card pending">
-            <div>
-              <div class="kpi-label">Pendentes</div>
-              <div class="kpi-value" id="kpiPendentes">0</div>
-            </div>
-            <div class="kpi-icon">◷</div>
-          </div>
-        </div>
       </div>
-
-      <div class="dashboard-extra">
-        <div class="progress-card">
-          <div class="progress-head">
-            <span>Progresso do fechamento</span>
-            <span class="progress-percent" id="kpiPercentual">0%</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" id="progressFill"></div>
-          </div>
-          <div class="progress-sub" id="progressSub">0 de 0 faturas finalizadas</div>
+<div class="progress-sub" id="progressSub">0 de 0 faturas finalizadas</div>
         </div>
 
         <div class="value-panel">
@@ -1551,50 +1495,8 @@
     ];
 
     function normalizarStatus(valor) {
-      const statusOriginal = String(valor || "").trim();
-      const statusNormalizado = normalizar(statusOriginal);
-
-      if (!statusOriginal) return "Pendente";
-
-      if (
-        statusNormalizado === "finalizado sem ap" ||
-        statusNormalizado === "finalizado sem a.p" ||
-        statusNormalizado === "sem ap" ||
-        statusNormalizado === "sem a.p" ||
-        statusNormalizado === "sem-ap"
-      ) {
-        return "Finalizado sem AP";
-      }
-
-      if (statusNormalizado === "conciliado" || statusNormalizado === "conciliada") {
-        return "Conciliado";
-      }
-
-      if (statusNormalizado === "divergente" || statusNormalizado === "divergencia") {
-        return "Divergente";
-      }
-
-      if (
-        statusNormalizado === "aguardando retorno" ||
-        statusNormalizado === "aguardando" ||
-        statusNormalizado === "em retorno"
-      ) {
-        return "Aguardando retorno";
-      }
-
-      if (
-        statusNormalizado === "nao conciliavel" ||
-        statusNormalizado === "nao-conciliavel"
-      ) {
-        return "Não conciliável";
-      }
-
-      if (statusNormalizado === "pendente") {
-        return "Pendente";
-      }
-
-      const statusEncontrado = STATUS_CONCILIACAO.find(status => normalizar(status) === statusNormalizado);
-      return statusEncontrado || "Pendente";
+      const status = String(valor || "").trim();
+      return STATUS_CONCILIACAO.includes(status) ? status : "Pendente";
     }
 
     function statusFinalizado(status) {
@@ -1802,14 +1704,11 @@
         const passaPeriodo = periodoFiltro === "todos" || String(item.periodo) === String(periodoFiltro);
         const itemFinalizado = statusFinalizado(item.statusConciliacao) || item.finalizado;
 
-        const statusFiltroNormalizado = normalizarStatus(status);
-        const statusItemNormalizado = normalizarStatus(item.statusConciliacao);
-
         const passaStatus =
           status === "todos" ||
           (status === "pendentes" && !itemFinalizado) ||
           (status === "finalizados" && itemFinalizado) ||
-          statusFiltroNormalizado === statusItemNormalizado;
+          normalizarStatus(status) === normalizarStatus(item.statusConciliacao);
 
         return passaTexto && passaPeriodo && passaStatus;
       });
