@@ -2125,7 +2125,8 @@
             apCre: somenteNumeros(selecionado.apCre),
             observacao: selecionado.observacao || "",
             statusConciliacao: normalizarStatus(selecionado.statusConciliacao),
-            finalizado: statusFinalizado(selecionado.statusConciliacao)
+            finalizado: statusFinalizado(selecionado.statusConciliacao),
+            usuario: firebaseAuth?.currentUser?.email || "Usuário não identificado"
           })
         });
 
