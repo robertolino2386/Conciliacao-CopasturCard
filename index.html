@@ -2487,6 +2487,7 @@
 
 
     let firebaseAuth = null;
+    let firebaseJaIniciado = false;
 
     function traduzirErroLogin(erro) {
       const codigo = erro?.code || "";
@@ -2511,7 +2512,11 @@
     function iniciarFirebaseAuth() {
       try {
         if (!window.firebase || !firebase.auth) {
-          throw new Error("Biblioteca do Firebase não carregou.");
+          throw new Error("Biblioteca do Firebase não carregou. Atualize a página e tente novamente.");
+        }
+
+        if (!CONFIG.firebaseConfig || !CONFIG.firebaseConfig.apiKey) {
+          throw new Error("Configuração do Firebase não encontrada no index.");
         }
 
         if (!firebase.apps.length) {
@@ -2519,13 +2524,17 @@
         }
 
         firebaseAuth = firebase.auth();
+        firebaseJaIniciado = true;
 
         firebaseAuth.onAuthStateChanged(usuario => {
           if (usuario) {
             el.loginScreen.classList.add("hidden");
             el.userArea.classList.add("show");
             el.usuarioLogado.textContent = usuario.email || "Usuário conectado";
-            iniciarFirebaseAuth();
+
+            if (!lancamentos.length) {
+              carregarLancamentos();
+            }
           } else {
             el.loginScreen.classList.remove("hidden");
             el.userArea.classList.remove("show");
@@ -2546,8 +2555,12 @@
         el.btnLogin.disabled = true;
         el.btnLogin.textContent = "Entrando...";
 
+        if (!firebaseAuth || !firebaseJaIniciado) {
+      
+        }
+
         if (!firebaseAuth) {
-          throw new Error("Firebase Auth não foi inicializado.");
+          throw new Error("Firebase Auth não foi inicializado. Atualize a página e tente novamente.");
         }
 
         await firebaseAuth.signInWithEmailAndPassword(
@@ -2696,6 +2709,9 @@
     });
 
     carregarLancamentos();
+    window.addEventListener("DOMContentLoaded", () => {
+      iniciarFirebaseAuth();
+    });
   </script>
 </body>
 </html>
