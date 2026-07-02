@@ -1246,24 +1246,10 @@
       .resumo-grid { grid-template-columns: 1fr; }
     }
   </style>
+  <!-- Firebase Auth - versão compatível com HTML único/GitHub Pages -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged,
-      signInWithEmailAndPassword,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-
-    window.firebaseAuthCopastur = {
-      initializeApp,
-      getAuth,
-      onAuthStateChanged,
-      signInWithEmailAndPassword,
-      signOut
-    };
-  </script>
 </head>
 <body>
   <div class="login-screen" id="loginScreen">
@@ -2519,9 +2505,10 @@
         "auth/user-not-found": "Usuário não encontrado.",
         "auth/wrong-password": "Senha incorreta.",
         "auth/invalid-credential": "E-mail ou senha inválidos.",
-        "auth/too-many-requests": "Muitas tentativas. Aguarde alguns minutos e tente novamente."
+        "auth/too-many-requests": "Muitas tentativas. Aguarde alguns minutos e tente novamente.",
+        "auth/unauthorized-domain": "Domínio não autorizado no Firebase. Adicione robertolino2386.github.io em Authentication > Configurações > Domínios autorizados."
       };
-      return mapa[codigo] || "Não foi possível entrar. Verifique e-mail e senha.";
+      return mapa[codigo] || `Não foi possível entrar. Erro: ${codigo || "desconhecido"}`;
     }
 
     function iniciarFirebaseAuth() {
@@ -2531,11 +2518,19 @@
         return;
       }
 
-      const fb = window.firebaseAuthCopastur;
-      firebaseApp = fb.initializeApp(CONFIG.firebaseConfig);
-      firebaseAuth = fb.getAuth(firebaseApp);
+      if (!window.firebase || !firebase.auth) {
+        el.loginErro.textContent = "Firebase não carregou. Verifique sua conexão e os scripts do Firebase no index.";
+        el.loginErro.classList.add("show");
+        return;
+      }
 
-      fb.onAuthStateChanged(firebaseAuth, usuario => {
+      firebaseApp = firebase.apps.length
+        ? firebase.app()
+        : firebase.initializeApp(CONFIG.firebaseConfig);
+
+      firebaseAuth = firebase.auth();
+
+      firebaseAuth.onAuthStateChanged(usuario => {
         if (usuario) {
           el.loginScreen.classList.add("hidden");
           el.userArea.classList.add("show");
@@ -2556,13 +2551,12 @@
         el.btnLogin.disabled = true;
         el.btnLogin.textContent = "Entrando...";
 
-        const fb = window.firebaseAuthCopastur;
-        await fb.signInWithEmailAndPassword(
-          firebaseAuth,
+        await firebaseAuth.signInWithEmailAndPassword(
           el.loginEmail.value.trim(),
           el.loginSenha.value
         );
       } catch (erro) {
+        console.error("ERRO LOGIN FIREBASE:", erro);
         el.loginErro.textContent = traduzirErroLogin(erro.code);
         el.loginErro.classList.add("show");
       } finally {
@@ -2573,8 +2567,7 @@
 
     async function sairSistema() {
       if (!firebaseAuth) return;
-      const fb = window.firebaseAuthCopastur;
-      await fb.signOut(firebaseAuth);
+      await firebaseAuth.signOut();
     }
 
 
