@@ -2498,7 +2498,10 @@
         CONFIG.firebaseConfig.apiKey !== "COLE_AQUI";
     }
 
-    function traduzirErroLogin(codigo) {
+    function traduzirErroLogin(erro) {
+      const codigo = erro?.code || "";
+      const mensagem = erro?.message || "";
+
       const mapa = {
         "auth/invalid-email": "E-mail inválido.",
         "auth/user-disabled": "Usuário desativado.",
@@ -2506,9 +2509,14 @@
         "auth/wrong-password": "Senha incorreta.",
         "auth/invalid-credential": "E-mail ou senha inválidos.",
         "auth/too-many-requests": "Muitas tentativas. Aguarde alguns minutos e tente novamente.",
-        "auth/unauthorized-domain": "Domínio não autorizado no Firebase. Adicione robertolino2386.github.io em Authentication > Configurações > Domínios autorizados."
+        "auth/unauthorized-domain": "Domínio não autorizado no Firebase. Adicione robertolino2386.github.io em Authentication > Configurações > Domínios autorizados.",
+        "auth/network-request-failed": "Falha de rede ao conectar com o Firebase. Verifique a conexão e tente novamente."
       };
-      return mapa[codigo] || `Não foi possível entrar. Erro: ${codigo || "desconhecido"}`;
+
+      if (mapa[codigo]) return mapa[codigo];
+
+      if (mensagem) return `Não foi possível entrar. ${mensagem}`;
+      return "Não foi possível entrar. O Firebase não retornou detalhes do erro.";
     }
 
     function iniciarFirebaseAuth() {
@@ -2551,13 +2559,17 @@
         el.btnLogin.disabled = true;
         el.btnLogin.textContent = "Entrando...";
 
+        if (!firebaseAuth) {
+          throw new Error("Firebase Auth não foi inicializado. Confira se o firebaseConfig está correto e se o domínio do GitHub Pages está autorizado.");
+        }
+
         await firebaseAuth.signInWithEmailAndPassword(
           el.loginEmail.value.trim(),
           el.loginSenha.value
         );
       } catch (erro) {
         console.error("ERRO LOGIN FIREBASE:", erro);
-        el.loginErro.textContent = traduzirErroLogin(erro.code);
+        el.loginErro.textContent = traduzirErroLogin(erro);
         el.loginErro.classList.add("show");
       } finally {
         el.btnLogin.disabled = false;
