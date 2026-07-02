@@ -1223,6 +1223,28 @@
 
     .btn-logout:hover { background: var(--azul-suave); }
 
+
+
+    .dashboard-card {
+      border-radius: 22px;
+    }
+
+    .dashboard-card .dash-kpis {
+      background: linear-gradient(180deg, #FBFCFE, #F5F9FF);
+    }
+
+    .dashboard-card .dash-card {
+      min-height: 88px;
+    }
+
+    .dashboard-card .dash-box {
+      min-height: 360px;
+    }
+
+    .dashboard-card .dash-table th,
+    .dashboard-card .dash-table td {
+      white-space: nowrap;
+    }
     .column-label,
     .percent-label,
     .percent-value {
@@ -1303,6 +1325,7 @@
 
   <nav class="nav-sistema">
     <button class="nav-btn ativo" id="btnTelaConciliacao" type="button">📋 Conciliação</button>
+    <button class="nav-btn" id="btnTelaDashboard" type="button">📊 Dashboard</button>
   </nav>
 
   <main>
@@ -1418,6 +1441,82 @@
       </div>
     </section>
     </div>
+
+    <div id="pageDashboard" class="dashboard-page page-hidden">
+      <section class="card dashboard-card">
+        <div class="dashboard-toolbar">
+          <select id="dashboardPeriodo" class="select-status">
+            <option value="todos">Todos períodos</option>
+          </select>
+          <div class="dashboard-title">
+            <h2>Dashboard de Fechamentos</h2>
+            <p>Visão por status, valores e quantidades por mês para acompanhar o fechamento das faturas.</p>
+          </div>
+        </div>
+
+        <div class="dash-kpis">
+          <div class="dash-card"><small>Total de faturas</small><strong id="dashTotal">0</strong></div>
+          <div class="dash-card"><small>Finalizadas</small><strong id="dashFinalizadas">0</strong></div>
+          <div class="dash-card"><small>Pendentes</small><strong id="dashPendentes">0</strong></div>
+          <div class="dash-card"><small>% fechamento</small><strong id="dashPercentual">0%</strong></div>
+          <div class="dash-card"><small>Valor pendente</small><strong id="dashValorPendente">R$ 0,00</strong></div>
+        </div>
+
+        <div class="dash-grid">
+          <div class="dash-box">
+            <div class="dash-box-head">
+              <h3>Quantidade por status</h3>
+              <p>Colunas com o total de faturas em cada situação no período selecionado.</p>
+            </div>
+            <div class="chart-area">
+              <div class="column-chart" id="dashColumnChart"></div>
+            </div>
+            <div class="chart-legend" id="dashColumnLegend"></div>
+          </div>
+
+          <div class="dash-box">
+            <div class="dash-box-head">
+              <h3>Participação por status</h3>
+              <p>Percentual de cada status dentro do total filtrado.</p>
+            </div>
+            <div class="bar-percent-list" id="dashPercentBars"></div>
+          </div>
+        </div>
+
+        <div class="dash-grid full">
+          <div class="dash-box">
+            <div class="dash-box-head">
+              <h3>Valores e quantidades por mês</h3>
+              <p>Resumo mensal com quantidade por status e valores total, finalizado e pendente.</p>
+            </div>
+            <div class="dash-table-wrap">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Período</th>
+                    <th>Total qtd.</th>
+                    <th>Conciliado</th>
+                    <th>Finalizado sem AP</th>
+                    <th>Divergente</th>
+                    <th>Aguardando retorno</th>
+                    <th>Não conciliável</th>
+                    <th>Pendente</th>
+                    <th>% finalizado</th>
+                    <th>Valor total</th>
+                    <th>Valor finalizado</th>
+                    <th>Valor pendente</th>
+                  </tr>
+                </thead>
+                <tbody id="dashTabelaPeriodo">
+                  <tr><td colspan="12" class="dash-empty">Carregando análise...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
 
   </main>
 
@@ -2417,11 +2516,12 @@
         : resumo.filter(item => String(item.periodo) === String(periodoFiltro));
 
       if (!resumoFiltrado.length) {
-        el.dashTabelaPeriodo.innerHTML = `<tr><td colspan="10" class="dash-empty">Nenhum dado encontrado.</td></tr>`;
+        el.dashTabelaPeriodo.innerHTML = `<tr><td colspan="12" class="dash-empty">Nenhum dado encontrado.</td></tr>`;
       } else {
         el.dashTabelaPeriodo.innerHTML = resumoFiltrado.map(item => {
           const finalizadoLinha = item.conciliado + item.semAp + item.naoConciliavel;
           const pctLinha = item.total ? Math.round((finalizadoLinha / item.total) * 100) : 0;
+          const valorPendenteLinha = item.valorTotal - item.valorFinalizado;
 
           return `
             <tr>
@@ -2433,8 +2533,10 @@
               <td>${item.aguardando}</td>
               <td>${item.naoConciliavel}</td>
               <td>${item.pendente}</td>
-              <td>${pctLinha}%</td>
+              <td><strong>${pctLinha}%</strong></td>
               <td class="valor">${formatarMoeda(item.valorTotal)}</td>
+              <td class="valor">${formatarMoeda(item.valorFinalizado)}</td>
+              <td class="valor">${formatarMoeda(valorPendenteLinha)}</td>
             </tr>
           `;
         }).join("");
