@@ -6,6 +6,8 @@
   <title>Conciliação Extrato CopasturCard</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 
   <style>
     :root {
@@ -1246,10 +1248,6 @@
       .resumo-grid { grid-template-columns: 1fr; }
     }
   </style>
-  <!-- Firebase Auth - versão compatível com HTML único/GitHub Pages -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-
 </head>
 <body>
   <div class="login-screen" id="loginScreen">
@@ -1289,7 +1287,6 @@
     <span id="usuarioLogado">Usuário conectado</span>
     <button class="btn-logout" id="btnLogout" type="button">Sair</button>
   </div>
-
 
   <nav class="nav-sistema">
     <button class="nav-btn ativo" id="btnTelaConciliacao" type="button">📋 Conciliação</button>
@@ -2489,14 +2486,7 @@
     }
 
 
-    let firebaseApp = null;
     let firebaseAuth = null;
-
-    function firebaseConfigurado() {
-      return CONFIG.firebaseConfig &&
-        CONFIG.firebaseConfig.apiKey &&
-        CONFIG.firebaseConfig.apiKey !== "COLE_AQUI";
-    }
 
     function traduzirErroLogin(erro) {
       const codigo = erro?.code || "";
@@ -2509,46 +2499,43 @@
         "auth/wrong-password": "Senha incorreta.",
         "auth/invalid-credential": "E-mail ou senha inválidos.",
         "auth/too-many-requests": "Muitas tentativas. Aguarde alguns minutos e tente novamente.",
-        "auth/unauthorized-domain": "Domínio não autorizado no Firebase. Adicione robertolino2386.github.io em Authentication > Configurações > Domínios autorizados.",
-        "auth/network-request-failed": "Falha de rede ao conectar com o Firebase. Verifique a conexão e tente novamente."
+        "auth/unauthorized-domain": "Domínio não autorizado no Firebase. Confirme robertolino2386.github.io em Authentication > Configurações > Domínios autorizados.",
+        "auth/network-request-failed": "Falha de rede ao conectar com o Firebase."
       };
 
       if (mapa[codigo]) return mapa[codigo];
-
       if (mensagem) return `Não foi possível entrar. ${mensagem}`;
       return "Não foi possível entrar. O Firebase não retornou detalhes do erro.";
     }
 
     function iniciarFirebaseAuth() {
-      if (!firebaseConfigurado()) {
-        el.loginErro.textContent = "Configure o Firebase no index antes de usar o login.";
-        el.loginErro.classList.add("show");
-        return;
-      }
-
-      if (!window.firebase || !firebase.auth) {
-        el.loginErro.textContent = "Firebase não carregou. Verifique sua conexão e os scripts do Firebase no index.";
-        el.loginErro.classList.add("show");
-        return;
-      }
-
-      firebaseApp = firebase.apps.length
-        ? firebase.app()
-        : firebase.initializeApp(CONFIG.firebaseConfig);
-
-      firebaseAuth = firebase.auth();
-
-      firebaseAuth.onAuthStateChanged(usuario => {
-        if (usuario) {
-          el.loginScreen.classList.add("hidden");
-          el.userArea.classList.add("show");
-          el.usuarioLogado.textContent = usuario.email || "Usuário conectado";
-          iniciarFirebaseAuth();
-        } else {
-          el.loginScreen.classList.remove("hidden");
-          el.userArea.classList.remove("show");
+      try {
+        if (!window.firebase || !firebase.auth) {
+          throw new Error("Biblioteca do Firebase não carregou.");
         }
-      });
+
+        if (!firebase.apps.length) {
+          firebase.initializeApp(CONFIG.firebaseConfig);
+        }
+
+        firebaseAuth = firebase.auth();
+
+        firebaseAuth.onAuthStateChanged(usuario => {
+          if (usuario) {
+            el.loginScreen.classList.add("hidden");
+            el.userArea.classList.add("show");
+            el.usuarioLogado.textContent = usuario.email || "Usuário conectado";
+            iniciarFirebaseAuth();
+          } else {
+            el.loginScreen.classList.remove("hidden");
+            el.userArea.classList.remove("show");
+          }
+        });
+      } catch (erro) {
+        console.error("ERRO AO INICIAR FIREBASE:", erro);
+        el.loginErro.textContent = erro.message || "Não foi possível iniciar o Firebase.";
+        el.loginErro.classList.add("show");
+      }
     }
 
     async function entrarSistema(event) {
@@ -2560,7 +2547,7 @@
         el.btnLogin.textContent = "Entrando...";
 
         if (!firebaseAuth) {
-          throw new Error("Firebase Auth não foi inicializado. Confira se o firebaseConfig está correto e se o domínio do GitHub Pages está autorizado.");
+          throw new Error("Firebase Auth não foi inicializado.");
         }
 
         await firebaseAuth.signInWithEmailAndPassword(
@@ -2580,6 +2567,10 @@
     async function sairSistema() {
       if (!firebaseAuth) return;
       await firebaseAuth.signOut();
+      lancamentos = [];
+      lancamentosFiltrados = [];
+      selecionado = null;
+      renderizarTabela();
     }
 
 
