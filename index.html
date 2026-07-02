@@ -1090,6 +1090,130 @@
       background: #FBFCFE;
     }
 
+
+    .login-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: linear-gradient(135deg, var(--azul-escuro), #0751A7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .login-screen.hidden { display: none; }
+
+    .login-card {
+      width: min(430px, 100%);
+      background: var(--branco);
+      border-radius: 22px;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.32);
+      padding: 28px;
+    }
+
+    .login-brand {
+      color: var(--azul-escuro);
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+
+    .login-card h2 {
+      margin: 0;
+      color: var(--azul-escuro);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .login-card p {
+      margin: 8px 0 20px;
+      color: var(--cinza-texto);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .login-field {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .login-field label {
+      color: var(--azul-escuro);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+
+    .login-field input {
+      width: 100%;
+      border: 1px solid var(--cinza-borda);
+      border-radius: 13px;
+      min-height: 48px;
+      padding: 12px 14px;
+      outline: none;
+      color: var(--texto);
+      font-size: 14px;
+      background: #FBFCFE;
+    }
+
+    .login-field input:focus {
+      border-color: var(--azul-claro);
+      box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.14);
+    }
+
+    .login-error {
+      display: none;
+      margin: 10px 0 0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: var(--vermelho);
+      background: #FFF0F1;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .login-error.show { display: block; }
+
+    .user-area {
+      width: min(1900px, calc(100% - 16px));
+      margin: 10px auto 0;
+      display: none;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      color: var(--azul-escuro);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .user-area.show { display: flex; }
+
+    .btn-logout {
+      border: 1px solid #BDEAFF;
+      background: var(--branco);
+      color: var(--azul-escuro);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: var(--sombra-leve);
+    }
+
+    .btn-logout:hover { background: var(--azul-suave); }
+
+    .column-label,
+    .percent-label,
+    .percent-value {
+      color: #111827 !important;
+    }
+
     @media (max-width: 1180px) {
       .dash-kpis { grid-template-columns: repeat(2, 1fr); }
       .dash-grid { grid-template-columns: 1fr; }
@@ -1122,8 +1246,49 @@
       .resumo-grid { grid-template-columns: 1fr; }
     }
   </style>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+    window.firebaseAuthCopastur = {
+      initializeApp,
+      getAuth,
+      onAuthStateChanged,
+      signInWithEmailAndPassword,
+      signOut
+    };
+  </script>
 </head>
 <body>
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-brand">COPASTUR</div>
+      <h2>Entrar no sistema</h2>
+      <p>Use o e-mail e senha cadastrados no Firebase para acessar a conciliação CopasturCard.</p>
+
+      <form id="loginForm">
+        <div class="login-field">
+          <label for="loginEmail">E-mail</label>
+          <input id="loginEmail" type="email" autocomplete="email" placeholder="seu.email@copastur.com.br" required />
+        </div>
+
+        <div class="login-field">
+          <label for="loginSenha">Senha</label>
+          <input id="loginSenha" type="password" autocomplete="current-password" placeholder="Digite sua senha" required />
+        </div>
+
+        <button class="btn btn-primary" id="btnLogin" type="submit" style="width:100%;">Entrar</button>
+        <div class="login-error" id="loginErro">Não foi possível entrar. Verifique e-mail e senha.</div>
+      </form>
+    </div>
+  </div>
+
   <header>
     <div class="header-content">
       <div>
@@ -1133,6 +1298,12 @@
       <div class="logo-copastur">COPASTUR</div>
     </div>
   </header>
+
+  <div class="user-area" id="userArea">
+    <span id="usuarioLogado">Usuário conectado</span>
+    <button class="btn-logout" id="btnLogout" type="button">Sair</button>
+  </div>
+
 
   <nav class="nav-sistema">
     <button class="nav-btn ativo" id="btnTelaConciliacao" type="button">📋 Conciliação</button>
@@ -1166,62 +1337,8 @@
           <button class="btn btn-light" id="btnAtualizar" type="button">↻ Atualizar</button>
           <button class="btn btn-primary btn-save-small" id="btnSalvar" type="button">▣ Salvar APs</button>
         </div>
-
-        <div class="metrics-row">
-          <div class="kpi-card total">
-            <div>
-              <div class="kpi-label">Total</div>
-              <div class="kpi-value" id="kpiTotal">0</div>
-            </div>
-            <div class="kpi-icon">📄</div>
-          </div>
-          <div class="kpi-card done">
-            <div>
-              <div class="kpi-label">Conciliadas</div>
-              <div class="kpi-value" id="kpiConciliadas">0</div>
-            </div>
-            <div class="kpi-icon">✓</div>
-          </div>
-          <div class="kpi-card sem-ap">
-            <div>
-              <div class="kpi-label">Sem AP</div>
-              <div class="kpi-value" id="kpiSemAp">0</div>
-            </div>
-            <div class="kpi-icon">ℹ</div>
-          </div>
-          <div class="kpi-card divergente">
-            <div>
-              <div class="kpi-label">Divergentes</div>
-              <div class="kpi-value" id="kpiDivergentes">0</div>
-            </div>
-            <div class="kpi-icon">!</div>
-          </div>
-          <div class="kpi-card aguardando">
-            <div>
-              <div class="kpi-label">Aguardando</div>
-              <div class="kpi-value" id="kpiAguardando">0</div>
-            </div>
-            <div class="kpi-icon">⏳</div>
-          </div>
-          <div class="kpi-card pending">
-            <div>
-              <div class="kpi-label">Pendentes</div>
-              <div class="kpi-value" id="kpiPendentes">0</div>
-            </div>
-            <div class="kpi-icon">◷</div>
-          </div>
-        </div>
       </div>
-
-      <div class="dashboard-extra">
-        <div class="progress-card">
-          <div class="progress-head">
-            <span>Progresso do fechamento</span>
-            <span class="progress-percent" id="kpiPercentual">0%</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" id="progressFill"></div>
-          </div>
+      </div>
           <div class="progress-sub" id="progressSub">0 de 0 faturas finalizadas</div>
         </div>
 
@@ -1404,7 +1521,15 @@
   <script>
     const CONFIG = {
       appsScriptUrl: "https://script.google.com/macros/s/AKfycbyQkohwMFeFHVn6wh9ZqNgbiOgSmlkZPzYKRaQdNOX1Em0ezPzwqPv5TTPOGxa-BwpB/exec",
-      nomeGuia: "Base de Cartoes"
+      nomeGuia: "Base de Cartoes",
+      firebaseConfig: {
+        apiKey: "AIzaSyB4gW_XyNWilD8AWOH-w4aQpLcdYN7bi0Y",
+        authDomain: "extrato-copasturcard-eed76.firebaseapp.com",
+        projectId: "extrato-copasturcard-eed76",
+        storageBucket: "extrato-copasturcard-eed76.firebasestorage.app",
+        messagingSenderId: "255229633862",
+        appId: "1:255229633862:web:26e2cc7373a8442a24f147"
+      }
     };
 
     if (window.pdfjsLib) {
@@ -1466,7 +1591,16 @@
       dashColumnChart: document.getElementById("dashColumnChart"),
       dashColumnLegend: document.getElementById("dashColumnLegend"),
       dashPercentBars: document.getElementById("dashPercentBars"),
-      dashTabelaPeriodo: document.getElementById("dashTabelaPeriodo")
+      dashTabelaPeriodo: document.getElementById("dashTabelaPeriodo"),
+      loginScreen: document.getElementById("loginScreen"),
+      loginForm: document.getElementById("loginForm"),
+      loginEmail: document.getElementById("loginEmail"),
+      loginSenha: document.getElementById("loginSenha"),
+      loginErro: document.getElementById("loginErro"),
+      btnLogin: document.getElementById("btnLogin"),
+      userArea: document.getElementById("userArea"),
+      usuarioLogado: document.getElementById("usuarioLogado"),
+      btnLogout: document.getElementById("btnLogout")
     };
 
     function mostrarStatus(texto, tipo = "info") {
@@ -1744,20 +1878,20 @@
 
       const percentual = total ? Math.round((finalizadas / total) * 100) : 0;
 
-      el.kpiTotal.textContent = total;
-      el.kpiConciliadas.textContent = conciliadas;
-      el.kpiSemAp.textContent = semAp;
-      el.kpiDivergentes.textContent = divergentes;
-      el.kpiAguardando.textContent = aguardando;
-      el.kpiPendentes.textContent = pendentes;
+      if (el.kpiTotal) el.kpiTotal.textContent = total;
+      if (el.kpiConciliadas) el.kpiConciliadas.textContent = conciliadas;
+      if (el.kpiSemAp) el.kpiSemAp.textContent = semAp;
+      if (el.kpiDivergentes) el.kpiDivergentes.textContent = divergentes;
+      if (el.kpiAguardando) el.kpiAguardando.textContent = aguardando;
+      if (el.kpiPendentes) el.kpiPendentes.textContent = pendentes;
 
-      el.kpiPercentual.textContent = `${percentual}%`;
-      el.progressFill.style.width = `${percentual}%`;
-      el.progressSub.textContent = `${finalizadas} de ${total} faturas finalizadas`;
+      if (el.kpiPercentual) el.kpiPercentual.textContent = `${percentual}%`;
+      if (el.progressFill) el.progressFill.style.width = `${percentual}%`;
+      if (el.progressSub) el.progressSub.textContent = `${finalizadas} de ${total} faturas finalizadas`;
 
-      el.valorTotalDashboard.textContent = formatarMoeda(valorTotal);
-      el.valorConciliadoDashboard.textContent = formatarMoeda(valorFinalizado);
-      el.valorPendenteDashboard.textContent = formatarMoeda(valorPendente);
+      if (el.valorTotalDashboard) el.valorTotalDashboard.textContent = formatarMoeda(valorTotal);
+      if (el.valorConciliadoDashboard) el.valorConciliadoDashboard.textContent = formatarMoeda(valorFinalizado);
+      if (el.valorPendenteDashboard) el.valorPendenteDashboard.textContent = formatarMoeda(valorPendente);
     }
 
     function atualizarFiltroPeriodo() {
@@ -2367,6 +2501,85 @@
         atualizarDashboard();
       }
     }
+
+
+    let firebaseApp = null;
+    let firebaseAuth = null;
+
+    function firebaseConfigurado() {
+      return CONFIG.firebaseConfig &&
+        CONFIG.firebaseConfig.apiKey &&
+        CONFIG.firebaseConfig.apiKey !== "COLE_AQUI";
+    }
+
+    function traduzirErroLogin(codigo) {
+      const mapa = {
+        "auth/invalid-email": "E-mail inválido.",
+        "auth/user-disabled": "Usuário desativado.",
+        "auth/user-not-found": "Usuário não encontrado.",
+        "auth/wrong-password": "Senha incorreta.",
+        "auth/invalid-credential": "E-mail ou senha inválidos.",
+        "auth/too-many-requests": "Muitas tentativas. Aguarde alguns minutos e tente novamente."
+      };
+      return mapa[codigo] || "Não foi possível entrar. Verifique e-mail e senha.";
+    }
+
+    function iniciarFirebaseAuth() {
+      if (!firebaseConfigurado()) {
+        el.loginErro.textContent = "Configure o Firebase no index antes de usar o login.";
+        el.loginErro.classList.add("show");
+        return;
+      }
+
+      const fb = window.firebaseAuthCopastur;
+      firebaseApp = fb.initializeApp(CONFIG.firebaseConfig);
+      firebaseAuth = fb.getAuth(firebaseApp);
+
+      fb.onAuthStateChanged(firebaseAuth, usuario => {
+        if (usuario) {
+          el.loginScreen.classList.add("hidden");
+          el.userArea.classList.add("show");
+          el.usuarioLogado.textContent = usuario.email || "Usuário conectado";
+          iniciarFirebaseAuth();
+        } else {
+          el.loginScreen.classList.remove("hidden");
+          el.userArea.classList.remove("show");
+        }
+      });
+    }
+
+    async function entrarSistema(event) {
+      event.preventDefault();
+
+      try {
+        el.loginErro.classList.remove("show");
+        el.btnLogin.disabled = true;
+        el.btnLogin.textContent = "Entrando...";
+
+        const fb = window.firebaseAuthCopastur;
+        await fb.signInWithEmailAndPassword(
+          firebaseAuth,
+          el.loginEmail.value.trim(),
+          el.loginSenha.value
+        );
+      } catch (erro) {
+        el.loginErro.textContent = traduzirErroLogin(erro.code);
+        el.loginErro.classList.add("show");
+      } finally {
+        el.btnLogin.disabled = false;
+        el.btnLogin.textContent = "Entrar";
+      }
+    }
+
+    async function sairSistema() {
+      if (!firebaseAuth) return;
+      const fb = window.firebaseAuthCopastur;
+      await fb.signOut(firebaseAuth);
+    }
+
+
+    el.loginForm.addEventListener("submit", entrarSistema);
+    el.btnLogout.addEventListener("click", sairSistema);
 
     el.btnTelaConciliacao.addEventListener("click", () => mostrarTela("conciliacao"));
     el.btnTelaDashboard.addEventListener("click", () => mostrarTela("dashboard"));
