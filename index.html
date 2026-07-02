@@ -502,6 +502,7 @@
     .kpi-card.sem-ap { background: linear-gradient(135deg, #EEF4FF, #E4ECFF); }
     .kpi-card.divergente { background: linear-gradient(135deg, #FFF0F1, #FFE0E3); }
     .kpi-card.aguardando { background: linear-gradient(135deg, #F5F0FF, #EEE3FF); }
+    .kpi-card.nao-conciliavel { background: linear-gradient(135deg, #F1F5F9, #E2E8F0); }
 
     .kpi-label { font-size: 13px; font-weight: 800; color: var(--texto); margin-bottom: 8px; }
     .kpi-value { font-size: 24px; line-height: 1; font-weight: 900; color: var(--azul-escuro); }
@@ -510,6 +511,7 @@
     .kpi-card.sem-ap .kpi-value { color: var(--azul-escuro); }
     .kpi-card.divergente .kpi-value { color: var(--vermelho); }
     .kpi-card.aguardando .kpi-value { color: #6D28D9; }
+    .kpi-card.nao-conciliavel .kpi-value { color: #475467; }
     .kpi-icon { font-size: 24px; opacity: 0.78; }
 
     .dashboard-extra {
@@ -601,6 +603,16 @@
 
     .value-card.conciliado strong { color: var(--verde); }
     .value-card.saldo strong { color: var(--laranja); }
+
+
+    .status-value-panel {
+      padding: 0;
+      box-shadow: var(--sombra-leve);
+    }
+
+    .status-cards-row {
+      margin-top: 2px;
+    }
 
     .status-conciliacao.status-pendente { background: #FFF8EA; color: #B45309; border-color: #FCD38B; }
     .status-conciliacao.status-conciliado { background: #EFFFF5; color: var(--verde); border-color: #A7F3C6; }
@@ -1291,7 +1303,6 @@
 
   <nav class="nav-sistema">
     <button class="nav-btn ativo" id="btnTelaConciliacao" type="button">📋 Conciliação</button>
-    <button class="nav-btn" id="btnTelaDashboard" type="button">📊 Dashboard</button>
   </nav>
 
   <main>
@@ -1321,12 +1332,35 @@
           <button class="btn btn-light" id="btnAtualizar" type="button">↻ Atualizar</button>
           <button class="btn btn-primary btn-save-small" id="btnSalvar" type="button">▣ Salvar APs</button>
         </div>
-      </div>
-      </div>
-          <div class="progress-sub" id="progressSub">0 de 0 faturas finalizadas</div>
+
+        <div class="metrics-row status-cards-row">
+          <div class="kpi-card pending">
+            <div><div class="kpi-label">Pendente</div><div class="kpi-value" id="kpiPendentes">0</div></div>
+            <div class="kpi-icon">⏳</div>
+          </div>
+          <div class="kpi-card done">
+            <div><div class="kpi-label">Conciliado</div><div class="kpi-value" id="kpiConciliadas">0</div></div>
+            <div class="kpi-icon">✓</div>
+          </div>
+          <div class="kpi-card sem-ap">
+            <div><div class="kpi-label">Finalizado sem AP</div><div class="kpi-value" id="kpiSemAp">0</div></div>
+            <div class="kpi-icon">▣</div>
+          </div>
+          <div class="kpi-card divergente">
+            <div><div class="kpi-label">Divergente</div><div class="kpi-value" id="kpiDivergentes">0</div></div>
+            <div class="kpi-icon">!</div>
+          </div>
+          <div class="kpi-card aguardando">
+            <div><div class="kpi-label">Aguardando retorno</div><div class="kpi-value" id="kpiAguardando">0</div></div>
+            <div class="kpi-icon">↩</div>
+          </div>
+          <div class="kpi-card nao-conciliavel">
+            <div><div class="kpi-label">Não conciliável</div><div class="kpi-value" id="kpiNaoConciliavel">0</div></div>
+            <div class="kpi-icon">–</div>
+          </div>
         </div>
 
-        <div class="value-panel">
+        <div class="value-panel status-value-panel">
           <div class="value-grid">
             <div class="value-card total">
               <small>Valor total</small>
@@ -1385,78 +1419,6 @@
     </section>
     </div>
 
-    <div id="pageDashboard" class="dashboard-page page-hidden">
-      <section class="card">
-        <div class="dashboard-toolbar">
-          <select id="dashboardPeriodo" class="select-status">
-            <option value="todos">Todos períodos</option>
-          </select>
-          <div class="dashboard-title">
-            <h2>Dashboard de Fechamentos</h2>
-            <p>Análise dos fechamentos por período, status, quantidade, valores e percentual de participação.</p>
-          </div>
-        </div>
-
-        <div class="dash-kpis">
-          <div class="dash-card"><small>Total de faturas</small><strong id="dashTotal">0</strong></div>
-          <div class="dash-card"><small>Finalizadas</small><strong id="dashFinalizadas">0</strong></div>
-          <div class="dash-card"><small>Pendentes</small><strong id="dashPendentes">0</strong></div>
-          <div class="dash-card"><small>% fechamento</small><strong id="dashPercentual">0%</strong></div>
-          <div class="dash-card"><small>Valor pendente</small><strong id="dashValorPendente">R$ 0,00</strong></div>
-        </div>
-
-        <div class="dash-grid">
-          <div class="dash-box">
-            <div class="dash-box-head">
-              <h3>Gráfico de colunas por status</h3>
-              <p>Quantidade de faturas em cada status no período selecionado.</p>
-            </div>
-            <div class="chart-area">
-              <div class="column-chart" id="dashColumnChart"></div>
-            </div>
-            <div class="chart-legend" id="dashColumnLegend"></div>
-          </div>
-
-          <div class="dash-box">
-            <div class="dash-box-head">
-              <h3>% de cada status</h3>
-              <p>Gráfico de barras com a participação percentual de cada status.</p>
-            </div>
-            <div class="bar-percent-list" id="dashPercentBars"></div>
-          </div>
-        </div>
-
-        <div class="dash-grid full">
-          <div class="dash-box">
-            <div class="dash-box-head">
-              <h3>Fechamentos por período e status</h3>
-              <p>Resumo consolidado da operação por mês/período.</p>
-            </div>
-            <div class="dash-table-wrap">
-              <table class="dash-table">
-                <thead>
-                  <tr>
-                    <th>Período</th>
-                    <th>Total</th>
-                    <th>Conciliado</th>
-                    <th>Finalizado sem AP</th>
-                    <th>Divergente</th>
-                    <th>Aguardando retorno</th>
-                    <th>Não conciliável</th>
-                    <th>Pendente</th>
-                    <th>% finalizado</th>
-                    <th>Valor total</th>
-                  </tr>
-                </thead>
-                <tbody id="dashTabelaPeriodo">
-                  <tr><td colspan="10" class="dash-empty">Carregando análise...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
   </main>
 
   <div class="modal-overlay" id="modalResumo" aria-hidden="true">
@@ -1549,6 +1511,7 @@
       kpiSemAp: document.getElementById("kpiSemAp"),
       kpiDivergentes: document.getElementById("kpiDivergentes"),
       kpiAguardando: document.getElementById("kpiAguardando"),
+      kpiNaoConciliavel: document.getElementById("kpiNaoConciliavel"),
       kpiPendentes: document.getElementById("kpiPendentes"),
       kpiPercentual: document.getElementById("kpiPercentual"),
       progressFill: document.getElementById("progressFill"),
@@ -1851,6 +1814,7 @@
       const semAp = lancamentos.filter(item => normalizarStatus(item.statusConciliacao) === "Finalizado sem AP").length;
       const divergentes = lancamentos.filter(item => normalizarStatus(item.statusConciliacao) === "Divergente").length;
       const aguardando = lancamentos.filter(item => normalizarStatus(item.statusConciliacao) === "Aguardando retorno").length;
+      const naoConciliavel = lancamentos.filter(item => normalizarStatus(item.statusConciliacao) === "Não conciliável").length;
       const finalizadas = lancamentos.filter(item => statusFinalizado(item.statusConciliacao) || item.finalizado).length;
       const pendentes = total - finalizadas;
 
@@ -1867,6 +1831,7 @@
       if (el.kpiSemAp) el.kpiSemAp.textContent = semAp;
       if (el.kpiDivergentes) el.kpiDivergentes.textContent = divergentes;
       if (el.kpiAguardando) el.kpiAguardando.textContent = aguardando;
+      if (el.kpiNaoConciliavel) el.kpiNaoConciliavel.textContent = naoConciliavel;
       if (el.kpiPendentes) el.kpiPendentes.textContent = pendentes;
 
       if (el.kpiPercentual) el.kpiPercentual.textContent = `${percentual}%`;
@@ -2321,6 +2286,7 @@
     }
 
     function atualizarDashboardPeriodos() {
+      if (!el.dashboardPeriodo) return;
       const atual = el.dashboardPeriodo.value || "todos";
       const periodos = [...new Set(lancamentos.map(item => item.periodo).filter(Boolean))]
         .sort((a, b) => converterPeriodoParaData(a) - converterPeriodoParaData(b));
@@ -2334,6 +2300,7 @@
     }
 
     function baseDashboardFiltrada() {
+      if (!el.dashboardPeriodo) return lancamentos;
       const periodoFiltro = el.dashboardPeriodo.value || "todos";
       return periodoFiltro === "todos"
         ? lancamentos
@@ -2385,6 +2352,7 @@
     }
 
     function atualizarDashboard() {
+      if (!el.dashTotal) return;
       const base = baseDashboardFiltrada();
       const total = base.length;
       const finalizadas = base.filter(item => statusFinalizado(item.statusConciliacao) || item.finalizado).length;
@@ -2475,10 +2443,15 @@
 
     function mostrarTela(nomeTela) {
       const dashboard = nomeTela === "dashboard";
+      if (!el.pageDashboard) {
+        el.pageConciliacao.classList.remove("page-hidden");
+        if (el.btnTelaConciliacao) el.btnTelaConciliacao.classList.add("ativo");
+        return;
+      }
       el.pageConciliacao.classList.toggle("page-hidden", dashboard);
       el.pageDashboard.classList.toggle("page-hidden", !dashboard);
-      el.btnTelaConciliacao.classList.toggle("ativo", !dashboard);
-      el.btnTelaDashboard.classList.toggle("ativo", dashboard);
+      if (el.btnTelaConciliacao) el.btnTelaConciliacao.classList.toggle("ativo", !dashboard);
+      if (el.btnTelaDashboard) el.btnTelaDashboard.classList.toggle("ativo", dashboard);
 
       if (dashboard) {
         atualizarDashboardPeriodos();
@@ -2591,9 +2564,9 @@
     el.loginForm.addEventListener("submit", entrarSistema);
     el.btnLogout.addEventListener("click", sairSistema);
 
-    el.btnTelaConciliacao.addEventListener("click", () => mostrarTela("conciliacao"));
-    el.btnTelaDashboard.addEventListener("click", () => mostrarTela("dashboard"));
-    el.dashboardPeriodo.addEventListener("change", atualizarDashboard);
+    if (el.btnTelaConciliacao) el.btnTelaConciliacao.addEventListener("click", () => mostrarTela("conciliacao"));
+    if (el.btnTelaDashboard) el.btnTelaDashboard.addEventListener("click", () => mostrarTela("dashboard"));
+    if (el.dashboardPeriodo) el.dashboardPeriodo.addEventListener("change", atualizarDashboard);
 
     el.filtro.addEventListener("input", aplicarFiltro);
     el.filtroPeriodo.addEventListener("change", aplicarFiltro);
