@@ -9,7 +9,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 
-  
   <style>
     :root {
       --azul-escuro: #00285C;
@@ -502,7 +501,6 @@
     .kpi-card.sem-ap { background: linear-gradient(135deg, #EEF4FF, #E4ECFF); }
     .kpi-card.divergente { background: linear-gradient(135deg, #FFF0F1, #FFE0E3); }
     .kpi-card.aguardando { background: linear-gradient(135deg, #F5F0FF, #EEE3FF); }
-    .kpi-card.nao-conciliavel { background: linear-gradient(135deg, #F1F5F9, #E2E8F0); }
 
     .kpi-label { font-size: 13px; font-weight: 800; color: var(--texto); margin-bottom: 8px; }
     .kpi-value { font-size: 24px; line-height: 1; font-weight: 900; color: var(--azul-escuro); }
@@ -511,7 +509,6 @@
     .kpi-card.sem-ap .kpi-value { color: var(--azul-escuro); }
     .kpi-card.divergente .kpi-value { color: var(--vermelho); }
     .kpi-card.aguardando .kpi-value { color: #6D28D9; }
-    .kpi-card.nao-conciliavel .kpi-value { color: #475467; }
     .kpi-icon { font-size: 24px; opacity: 0.78; }
 
     .dashboard-extra {
@@ -603,16 +600,6 @@
 
     .value-card.conciliado strong { color: var(--verde); }
     .value-card.saldo strong { color: var(--laranja); }
-
-
-    .status-value-panel {
-      padding: 0;
-      box-shadow: var(--sombra-leve);
-    }
-
-    .status-cards-row {
-      margin-top: 2px;
-    }
 
     .status-conciliacao.status-pendente { background: #FFF8EA; color: #B45309; border-color: #FCD38B; }
     .status-conciliacao.status-conciliado { background: #EFFFF5; color: var(--verde); border-color: #A7F3C6; }
@@ -1105,6 +1092,66 @@
       background: #FBFCFE;
     }
 
+    .modal-cpa-card {
+      width: min(920px, 96vw);
+    }
+
+    .json-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .json-info {
+      color: var(--cinza-texto);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .json-box {
+      width: 100%;
+      min-height: 520px;
+      max-height: 65vh;
+      resize: vertical;
+      border: 1px solid var(--cinza-borda);
+      border-radius: 14px;
+      padding: 16px;
+      background: #07111F;
+      color: #EAF7FF;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.55;
+      outline: none;
+      white-space: pre;
+      overflow: auto;
+      tab-size: 2;
+    }
+
+    .json-box:focus {
+      border-color: var(--azul-claro);
+      box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.14);
+    }
+
+    .btn-cpa {
+      background: #0751A7;
+      color: var(--branco);
+      border: 0;
+      border-radius: 10px;
+      padding: 8px 11px;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 40, 92, 0.16);
+    }
+
+    .btn-cpa:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
 
     .login-screen {
       position: fixed;
@@ -1223,28 +1270,6 @@
 
     .btn-logout:hover { background: var(--azul-suave); }
 
-
-
-    .dashboard-card {
-      border-radius: 22px;
-    }
-
-    .dashboard-card .dash-kpis {
-      background: linear-gradient(180deg, #FBFCFE, #F5F9FF);
-    }
-
-    .dashboard-card .dash-card {
-      min-height: 88px;
-    }
-
-    .dashboard-card .dash-box {
-      min-height: 360px;
-    }
-
-    .dashboard-card .dash-table th,
-    .dashboard-card .dash-table td {
-      white-space: nowrap;
-    }
     .column-label,
     .percent-label,
     .percent-value {
@@ -1355,35 +1380,12 @@
           <button class="btn btn-light" id="btnAtualizar" type="button">↻ Atualizar</button>
           <button class="btn btn-primary btn-save-small" id="btnSalvar" type="button">▣ Salvar APs</button>
         </div>
-
-        <div class="metrics-row status-cards-row">
-          <div class="kpi-card pending">
-            <div><div class="kpi-label">Pendente</div><div class="kpi-value" id="kpiPendentes">0</div></div>
-            <div class="kpi-icon">⏳</div>
-          </div>
-          <div class="kpi-card done">
-            <div><div class="kpi-label">Conciliado</div><div class="kpi-value" id="kpiConciliadas">0</div></div>
-            <div class="kpi-icon">✓</div>
-          </div>
-          <div class="kpi-card sem-ap">
-            <div><div class="kpi-label">Finalizado sem AP</div><div class="kpi-value" id="kpiSemAp">0</div></div>
-            <div class="kpi-icon">▣</div>
-          </div>
-          <div class="kpi-card divergente">
-            <div><div class="kpi-label">Divergente</div><div class="kpi-value" id="kpiDivergentes">0</div></div>
-            <div class="kpi-icon">!</div>
-          </div>
-          <div class="kpi-card aguardando">
-            <div><div class="kpi-label">Aguardando retorno</div><div class="kpi-value" id="kpiAguardando">0</div></div>
-            <div class="kpi-icon">↩</div>
-          </div>
-          <div class="kpi-card nao-conciliavel">
-            <div><div class="kpi-label">Não conciliável</div><div class="kpi-value" id="kpiNaoConciliavel">0</div></div>
-            <div class="kpi-icon">–</div>
-          </div>
+      </div>
+      </div>
+          <div class="progress-sub" id="progressSub">0 de 0 faturas finalizadas</div>
         </div>
 
-        <div class="value-panel status-value-panel">
+        <div class="value-panel">
           <div class="value-grid">
             <div class="value-card total">
               <small>Valor total</small>
@@ -1421,12 +1423,13 @@
               <th class="col-ap">AP CRE</th>
               <th class="col-action">Fatura</th>
               <th class="col-action">Ver<br>Valores</th>
+              <th class="col-action">CPA</th>
               <th class="col-obs">Observação</th>
               <th class="col-status">Status</th>
             </tr>
           </thead>
           <tbody id="tabelaLancamentos">
-            <tr><td colspan="12" class="empty">Carregando lançamentos...</td></tr>
+            <tr><td colspan="13" class="empty">Carregando lançamentos...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1443,14 +1446,14 @@
     </div>
 
     <div id="pageDashboard" class="dashboard-page page-hidden">
-      <section class="card dashboard-card">
+      <section class="card">
         <div class="dashboard-toolbar">
           <select id="dashboardPeriodo" class="select-status">
             <option value="todos">Todos períodos</option>
           </select>
           <div class="dashboard-title">
             <h2>Dashboard de Fechamentos</h2>
-            <p>Visão por status, valores e quantidades por mês para acompanhar o fechamento das faturas.</p>
+            <p>Análise dos fechamentos por período, status, quantidade, valores e percentual de participação.</p>
           </div>
         </div>
 
@@ -1465,8 +1468,8 @@
         <div class="dash-grid">
           <div class="dash-box">
             <div class="dash-box-head">
-              <h3>Quantidade por status</h3>
-              <p>Colunas com o total de faturas em cada situação no período selecionado.</p>
+              <h3>Gráfico de colunas por status</h3>
+              <p>Quantidade de faturas em cada status no período selecionado.</p>
             </div>
             <div class="chart-area">
               <div class="column-chart" id="dashColumnChart"></div>
@@ -1476,8 +1479,8 @@
 
           <div class="dash-box">
             <div class="dash-box-head">
-              <h3>Participação por status</h3>
-              <p>Percentual de cada status dentro do total filtrado.</p>
+              <h3>% de cada status</h3>
+              <p>Gráfico de barras com a participação percentual de cada status.</p>
             </div>
             <div class="bar-percent-list" id="dashPercentBars"></div>
           </div>
@@ -1486,15 +1489,15 @@
         <div class="dash-grid full">
           <div class="dash-box">
             <div class="dash-box-head">
-              <h3>Valores e quantidades por mês</h3>
-              <p>Resumo mensal com quantidade por status e valores total, finalizado e pendente.</p>
+              <h3>Fechamentos por período e status</h3>
+              <p>Resumo consolidado da operação por mês/período.</p>
             </div>
             <div class="dash-table-wrap">
               <table class="dash-table">
                 <thead>
                   <tr>
                     <th>Período</th>
-                    <th>Total qtd.</th>
+                    <th>Total</th>
                     <th>Conciliado</th>
                     <th>Finalizado sem AP</th>
                     <th>Divergente</th>
@@ -1503,12 +1506,10 @@
                     <th>Pendente</th>
                     <th>% finalizado</th>
                     <th>Valor total</th>
-                    <th>Valor finalizado</th>
-                    <th>Valor pendente</th>
                   </tr>
                 </thead>
                 <tbody id="dashTabelaPeriodo">
-                  <tr><td colspan="12" class="dash-empty">Carregando análise...</td></tr>
+                  <tr><td colspan="10" class="dash-empty">Carregando análise...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1516,8 +1517,6 @@
         </div>
       </section>
     </div>
-
-
   </main>
 
   <div class="modal-overlay" id="modalResumo" aria-hidden="true">
@@ -1559,6 +1558,35 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-light" id="btnFecharModalRodape" type="button">Fechar</button>
+      </div>
+    </section>
+  </div>
+
+
+  <div class="modal-overlay" id="modalCpa" aria-hidden="true">
+    <section class="modal-card modal-cpa-card" role="dialog" aria-modal="true" aria-labelledby="tituloCpa">
+      <div class="modal-body">
+        <div class="modal-head">
+          <div>
+            <span class="pill">JSON para CPA</span>
+            <h2 id="tituloCpa">Lançamento CPA</h2>
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-primary" id="btnCopiarCpaTopo" type="button">Copiar JSON</button>
+            <button class="btn-close-x" id="btnFecharCpaX" type="button" aria-label="Fechar">×</button>
+          </div>
+        </div>
+
+        <div class="json-toolbar">
+          <div class="json-info" id="infoCpa">Confira os dados antes de copiar.</div>
+        </div>
+
+        <textarea class="json-box" id="jsonCpa" readonly spellcheck="false"></textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-light" id="btnFecharCpaRodape" type="button">Fechar</button>
+        <button class="btn btn-primary" id="btnCopiarCpaRodape" type="button" style="margin-left:10px;">Copiar JSON</button>
       </div>
     </section>
   </div>
@@ -1610,7 +1638,6 @@
       kpiSemAp: document.getElementById("kpiSemAp"),
       kpiDivergentes: document.getElementById("kpiDivergentes"),
       kpiAguardando: document.getElementById("kpiAguardando"),
-      kpiNaoConciliavel: document.getElementById("kpiNaoConciliavel"),
       kpiPendentes: document.getElementById("kpiPendentes"),
       kpiPercentual: document.getElementById("kpiPercentual"),
       progressFill: document.getElementById("progressFill"),
@@ -1638,6 +1665,14 @@
       dashColumnLegend: document.getElementById("dashColumnLegend"),
       dashPercentBars: document.getElementById("dashPercentBars"),
       dashTabelaPeriodo: document.getElementById("dashTabelaPeriodo"),
+      modalCpa: document.getElementById("modalCpa"),
+      tituloCpa: document.getElementById("tituloCpa"),
+      infoCpa: document.getElementById("infoCpa"),
+      jsonCpa: document.getElementById("jsonCpa"),
+      btnCopiarCpaTopo: document.getElementById("btnCopiarCpaTopo"),
+      btnCopiarCpaRodape: document.getElementById("btnCopiarCpaRodape"),
+      btnFecharCpaX: document.getElementById("btnFecharCpaX"),
+      btnFecharCpaRodape: document.getElementById("btnFecharCpaRodape"),
       loginScreen: document.getElementById("loginScreen"),
       loginForm: document.getElementById("loginForm"),
       loginEmail: document.getElementById("loginEmail"),
@@ -1881,7 +1916,7 @@
 
     async function carregarLancamentos() {
       if (CONFIG.appsScriptUrl.includes("COLE_AQUI")) {
-        el.tabela.innerHTML = `<tr><td colspan="12" class="empty">Aguardando a URL do Apps Script para carregar os lançamentos.</td></tr>`;
+        el.tabela.innerHTML = `<tr><td colspan="13" class="empty">Aguardando a URL do Apps Script para carregar os lançamentos.</td></tr>`;
         return;
       }
 
@@ -1901,7 +1936,7 @@
         atualizarDashboard();
         mostrarStatus("Lançamentos atualizados com sucesso.", "ok");
       } catch (erro) {
-        el.tabela.innerHTML = `<tr><td colspan="12" class="empty">Não foi possível carregar os lançamentos.</td></tr>`;
+        el.tabela.innerHTML = `<tr><td colspan="13" class="empty">Não foi possível carregar os lançamentos.</td></tr>`;
         mostrarStatus(erro.message, "erro");
       }
     }
@@ -1913,7 +1948,6 @@
       const semAp = lancamentos.filter(item => normalizarStatus(item.statusConciliacao) === "Finalizado sem AP").length;
       const divergentes = lancamentos.filter(item => normalizarStatus(item.statusConciliacao) === "Divergente").length;
       const aguardando = lancamentos.filter(item => normalizarStatus(item.statusConciliacao) === "Aguardando retorno").length;
-      const naoConciliavel = lancamentos.filter(item => normalizarStatus(item.statusConciliacao) === "Não conciliável").length;
       const finalizadas = lancamentos.filter(item => statusFinalizado(item.statusConciliacao) || item.finalizado).length;
       const pendentes = total - finalizadas;
 
@@ -1930,7 +1964,6 @@
       if (el.kpiSemAp) el.kpiSemAp.textContent = semAp;
       if (el.kpiDivergentes) el.kpiDivergentes.textContent = divergentes;
       if (el.kpiAguardando) el.kpiAguardando.textContent = aguardando;
-      if (el.kpiNaoConciliavel) el.kpiNaoConciliavel.textContent = naoConciliavel;
       if (el.kpiPendentes) el.kpiPendentes.textContent = pendentes;
 
       if (el.kpiPercentual) el.kpiPercentual.textContent = `${percentual}%`;
@@ -2008,7 +2041,7 @@
       if (paginaAtual < 1) paginaAtual = 1;
 
       if (!totalRegistros) {
-        el.tabela.innerHTML = `<tr><td colspan="12" class="empty">Nenhum lançamento encontrado.</td></tr>`;
+        el.tabela.innerHTML = `<tr><td colspan="13" class="empty">Nenhum lançamento encontrado.</td></tr>`;
         atualizarPaginacao(0, 0, 0, 1);
         return;
       }
@@ -2039,6 +2072,7 @@
           <td><input class="input-ap" inputmode="numeric" data-campo="apCre" data-id="${item.id}" value="${escaparHtml(item.apCre)}" /></td>
           <td class="col-action"><button class="btn-table" type="button" data-fatura="${item.id}">Ver<br>Fatura</button></td>
           <td class="col-action"><button class="btn-plus" type="button" data-valores="${item.id}" title="Ver valores">+</button></td>
+          <td class="col-action"><button class="btn-cpa" type="button" data-cpa="${item.id}" title="Gerar JSON CPA">CPA</button></td>
           <td>
             <textarea class="obs-input" data-campo="observacao" data-id="${item.id}" placeholder="Informe divergências, erros ou motivo da pendência">${escaparHtml(item.observacao)}</textarea>
           </td>
@@ -2125,8 +2159,7 @@
             apCre: somenteNumeros(selecionado.apCre),
             observacao: selecionado.observacao || "",
             statusConciliacao: normalizarStatus(selecionado.statusConciliacao),
-            finalizado: statusFinalizado(selecionado.statusConciliacao),
-            usuario: firebaseAuth?.currentUser?.email || "Usuário não identificado"
+            finalizado: statusFinalizado(selecionado.statusConciliacao)
           })
         });
 
@@ -2154,6 +2187,117 @@
 
       el.tituloFatura.textContent = `${selecionado.periodo || ""} - ${selecionado.cartaoFinal || ""} - ${selecionado.proprietario || ""}`;
       el.metricValor.textContent = formatarMoeda(moedaParaNumero(selecionado.valor));
+    }
+
+
+    function dataInicialPeriodo(periodo) {
+      const partes = String(periodo || "").split("/");
+      const mes = Number(partes[0]);
+      const ano = Number(partes[1]);
+
+      if (!mes || !ano) return "";
+
+      return `${String(ano).padStart(4, "0")}${String(mes).padStart(2, "0")}01`;
+    }
+
+    function dataFinalPeriodo(periodo) {
+      const partes = String(periodo || "").split("/");
+      const mes = Number(partes[0]);
+      const ano = Number(partes[1]);
+
+      if (!mes || !ano) return "";
+
+      const ultimoDia = new Date(ano, mes, 0).getDate();
+
+      return `${String(ano).padStart(4, "0")}${String(mes).padStart(2, "0")}${String(ultimoDia).padStart(2, "0")}`;
+    }
+
+    function montarJsonCpa(item) {
+      const valor = Number(moedaParaNumero(item.valor).toFixed(2));
+      const dataEmissao = dataInicialPeriodo(item.periodo);
+      const vencimento = dataFinalPeriodo(item.periodo);
+
+      return {
+        codEmpresa: "1",
+        codFilial: "1",
+        documentoDigitado: String(item.documentoDigitado || ""),
+        codFornecedor: "106108",
+        dataEmissao: dataEmissao,
+        dataEntrada: dataEmissao,
+        dataExecucao: dataEmissao,
+        entradaSaida: "E",
+        abrangencia: "N",
+        historico: String(item.historico || ""),
+        valorNominal: valor,
+        valorLiquido: valor,
+        tipoDespesa: "16",
+        lancamentos: [
+          {
+            codConta: "16",
+            valor: valor,
+            percentual: 100,
+            natureza: "D",
+            centros: [
+              {
+                codCentro: "103003",
+                valor: valor,
+                percentual: 1000000
+              }
+            ]
+          }
+        ],
+        parcelas: [
+          {
+            parcelaDigitada: "1",
+            documentoSuspenso: "N",
+            vencimento: vencimento,
+            valor: valor,
+            percentualMora: 0,
+            moraDiaria: 0,
+            formaLiquidacao: "OUTROS",
+            tipoCobranca: "1",
+            historico: "",
+            nossoNumero: "",
+            codigoBarras: "",
+            linhaDigitavel: ""
+          }
+        ]
+      };
+    }
+
+    function abrirModalCpa(item) {
+      if (!item) return;
+
+      const json = montarJsonCpa(item);
+      el.tituloCpa.textContent = `CPA - ${item.periodo || ""} - ${item.cartaoFinal || ""} - ${item.proprietario || ""}`;
+      el.infoCpa.textContent = `Documento: ${item.documentoDigitado || "não informado"} | Vencimento: ${dataFinalPeriodo(item.periodo) || "não identificado"}`;
+      el.jsonCpa.value = JSON.stringify(json, null, 2);
+      el.modalCpa.classList.add("show");
+      el.modalCpa.setAttribute("aria-hidden", "false");
+    }
+
+    function fecharModalCpa() {
+      el.modalCpa.classList.remove("show");
+      el.modalCpa.setAttribute("aria-hidden", "true");
+    }
+
+    async function copiarJsonCpa() {
+      const texto = el.jsonCpa.value;
+
+      if (!texto) {
+        mostrarStatus("Nenhum JSON foi gerado.", "erro");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(texto);
+        mostrarStatus("JSON CPA copiado com sucesso.", "ok");
+      } catch (erro) {
+        el.jsonCpa.focus();
+        el.jsonCpa.select();
+        document.execCommand("copy");
+        mostrarStatus("JSON CPA copiado com sucesso.", "ok");
+      }
     }
 
     function abrirModalResumo() {
@@ -2386,7 +2530,6 @@
     }
 
     function atualizarDashboardPeriodos() {
-      if (!el.dashboardPeriodo) return;
       const atual = el.dashboardPeriodo.value || "todos";
       const periodos = [...new Set(lancamentos.map(item => item.periodo).filter(Boolean))]
         .sort((a, b) => converterPeriodoParaData(a) - converterPeriodoParaData(b));
@@ -2400,7 +2543,6 @@
     }
 
     function baseDashboardFiltrada() {
-      if (!el.dashboardPeriodo) return lancamentos;
       const periodoFiltro = el.dashboardPeriodo.value || "todos";
       return periodoFiltro === "todos"
         ? lancamentos
@@ -2452,7 +2594,6 @@
     }
 
     function atualizarDashboard() {
-      if (!el.dashTotal) return;
       const base = baseDashboardFiltrada();
       const total = base.length;
       const finalizadas = base.filter(item => statusFinalizado(item.statusConciliacao) || item.finalizado).length;
@@ -2517,12 +2658,11 @@
         : resumo.filter(item => String(item.periodo) === String(periodoFiltro));
 
       if (!resumoFiltrado.length) {
-        el.dashTabelaPeriodo.innerHTML = `<tr><td colspan="12" class="dash-empty">Nenhum dado encontrado.</td></tr>`;
+        el.dashTabelaPeriodo.innerHTML = `<tr><td colspan="10" class="dash-empty">Nenhum dado encontrado.</td></tr>`;
       } else {
         el.dashTabelaPeriodo.innerHTML = resumoFiltrado.map(item => {
           const finalizadoLinha = item.conciliado + item.semAp + item.naoConciliavel;
           const pctLinha = item.total ? Math.round((finalizadoLinha / item.total) * 100) : 0;
-          const valorPendenteLinha = item.valorTotal - item.valorFinalizado;
 
           return `
             <tr>
@@ -2534,10 +2674,8 @@
               <td>${item.aguardando}</td>
               <td>${item.naoConciliavel}</td>
               <td>${item.pendente}</td>
-              <td><strong>${pctLinha}%</strong></td>
+              <td>${pctLinha}%</td>
               <td class="valor">${formatarMoeda(item.valorTotal)}</td>
-              <td class="valor">${formatarMoeda(item.valorFinalizado)}</td>
-              <td class="valor">${formatarMoeda(valorPendenteLinha)}</td>
             </tr>
           `;
         }).join("");
@@ -2546,15 +2684,10 @@
 
     function mostrarTela(nomeTela) {
       const dashboard = nomeTela === "dashboard";
-      if (!el.pageDashboard) {
-        el.pageConciliacao.classList.remove("page-hidden");
-        if (el.btnTelaConciliacao) el.btnTelaConciliacao.classList.add("ativo");
-        return;
-      }
       el.pageConciliacao.classList.toggle("page-hidden", dashboard);
       el.pageDashboard.classList.toggle("page-hidden", !dashboard);
-      if (el.btnTelaConciliacao) el.btnTelaConciliacao.classList.toggle("ativo", !dashboard);
-      if (el.btnTelaDashboard) el.btnTelaDashboard.classList.toggle("ativo", dashboard);
+      el.btnTelaConciliacao.classList.toggle("ativo", !dashboard);
+      el.btnTelaDashboard.classList.toggle("ativo", dashboard);
 
       if (dashboard) {
         atualizarDashboardPeriodos();
@@ -2667,9 +2800,9 @@
     el.loginForm.addEventListener("submit", entrarSistema);
     el.btnLogout.addEventListener("click", sairSistema);
 
-    if (el.btnTelaConciliacao) el.btnTelaConciliacao.addEventListener("click", () => mostrarTela("conciliacao"));
-    if (el.btnTelaDashboard) el.btnTelaDashboard.addEventListener("click", () => mostrarTela("dashboard"));
-    if (el.dashboardPeriodo) el.dashboardPeriodo.addEventListener("change", atualizarDashboard);
+    el.btnTelaConciliacao.addEventListener("click", () => mostrarTela("conciliacao"));
+    el.btnTelaDashboard.addEventListener("click", () => mostrarTela("dashboard"));
+    el.dashboardPeriodo.addEventListener("change", atualizarDashboard);
 
     el.filtro.addEventListener("input", aplicarFiltro);
     el.filtroPeriodo.addEventListener("change", aplicarFiltro);
@@ -2694,6 +2827,15 @@
       el.scrollTopWrap.scrollLeft = el.tableWrap.scrollLeft;
       sincronizandoScroll = false;
     });
+    el.btnCopiarCpaTopo.addEventListener("click", copiarJsonCpa);
+    el.btnCopiarCpaRodape.addEventListener("click", copiarJsonCpa);
+    el.btnFecharCpaX.addEventListener("click", fecharModalCpa);
+    el.btnFecharCpaRodape.addEventListener("click", fecharModalCpa);
+
+    el.modalCpa.addEventListener("click", event => {
+      if (event.target === el.modalCpa) fecharModalCpa();
+    });
+
     el.btnFecharModalTopo.addEventListener("click", fecharModalResumo);
     el.btnFecharModalX.addEventListener("click", fecharModalResumo);
     el.btnFecharModalRodape.addEventListener("click", fecharModalResumo);
@@ -2703,7 +2845,10 @@
     });
 
     document.addEventListener("keydown", event => {
-      if (event.key === "Escape") fecharModalResumo();
+      if (event.key === "Escape") {
+        fecharModalResumo();
+        fecharModalCpa();
+      }
     });
 
     el.tabelaResumoPdf.addEventListener("click", event => {
@@ -2732,7 +2877,7 @@
     });
 
     el.tabela.addEventListener("change", event => {
-      if (!event.target.classList.contains("status-conciliacao")) return;
+      if (!event.target.classList.contains("status-conciliacao") || event.target.classList.contains("btn-cpa")) return;
 
       const id = event.target.dataset.id;
       atualizarAP(id, event.target.dataset.campo, event.target.value);
@@ -2763,6 +2908,14 @@
       if (botaoFatura) {
         const item = lancamentos.find(l => String(l.id) === String(botaoFatura.dataset.fatura));
         if (item?.pdfUrl) window.open(item.pdfUrl, "_blank");
+        return;
+      }
+
+      const botaoCpa = event.target.closest("button[data-cpa]");
+
+      if (botaoCpa) {
+        const item = lancamentos.find(l => String(l.id) === String(botaoCpa.dataset.cpa));
+        abrirModalCpa(item);
         return;
       }
 
