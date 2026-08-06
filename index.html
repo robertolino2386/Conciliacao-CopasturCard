@@ -1872,12 +1872,26 @@
     }
 
     function montarUrlFatura(periodo, cartaoFinal) {
-      const codigoPeriodo = montarCodigoPeriodo(periodo);
       const finalCartao = somenteNumeros(cartaoFinal).slice(-4);
+      const partes = String(periodo || "").split("/");
+      const mes = Number(partes[0]);
+      const ano = Number(partes[1]);
 
-      if (!codigoPeriodo || !finalCartao) return "";
+      if (!finalCartao || !mes || !ano) return "";
 
-      return `https://starkcard.carddashtool.com/cps/gerabill/bill_cta_${codigoPeriodo}.php?cardEnding=${finalCartao}`;
+      // Até 06/2026: mantém o endereço antigo.
+      if (ano < 2026 || (ano === 2026 && mes <= 6)) {
+        const codigoPeriodo = montarCodigoPeriodo(periodo);
+
+        if (!codigoPeriodo) return "";
+
+        return `https://starkcard.carddashtool.com/cps/gerabill/bill_cta_${codigoPeriodo}.php?cardEnding=${finalCartao}`;
+      }
+
+      // A partir de 07/2026: utiliza o novo endereço.
+      const movimento = `${String(mes).padStart(2, "0")}/${ano}`;
+
+      return `https://starkcard.carddashtool.com/cps/gerabill2/bill.php?cardEnding=${finalCartao}&movimento=${encodeURIComponent(movimento)}`;
     }
 
     function montarCodigoPeriodo(periodo) {
