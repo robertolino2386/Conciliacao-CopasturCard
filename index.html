@@ -1673,6 +1673,22 @@ header::before {
   .brand-logo-wrap{width:150px;flex-basis:150px}
 }
 </style>
+
+<style>
+/* Ajustes solicitados: sem Copastur no cabeçalho + crédito no rodapé */
+header .brand-logo-wrap { display: none !important; }
+header .header-divider { display: none !important; }
+header .header-brand { gap: 0 !important; }
+.site-footer {
+  width: min(1840px, calc(100% - 40px));
+  margin: 0 auto 24px;
+  padding: 14px 18px;
+  text-align: center;
+  color: #607086;
+  font-size: 12px;
+  font-weight: 700;
+}
+</style>
 </head>
 <body>
   <div class="login-screen" id="loginScreen">
@@ -3492,5 +3508,7 @@ header::before {
       iniciarFirebaseAuth();
     });
   </script>
+
+  <footer class="site-footer">Desenvolvido por Roberto Lino</footer>
 </body>
 </html>
